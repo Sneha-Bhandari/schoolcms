@@ -1,24 +1,30 @@
-import React from 'react'
-import Header from '../Component/Navigation/Header'
+import React from "react";
+import Header from "../Component/Navigation/Header";
 import { Outlet } from "react-router-dom";
-import SideBar from '../Component/Navigation/SideBar';
+import SideBar from "../Component/Navigation/SideBar";
 
 const Layout = () => {
   return (
-    <div className="overflow-clip h-full  w-screen">
-      
-      <Header/>
-      <div className="grid grid-cols-12 h-full w-full  gap-3">
-        <div className="md:col-span-2 ">
+    <div className="h-screen w-screen flex flex-col overflow-hidden">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+
+        <div className="md:w-56 w-0 md:block hidden">
           <SideBar />
         </div>
-        <div className="relative col-span-10 flex md:items-center justify-center mx-auto  pt-34 md:w-11/13  w-full h-full md:flex md:flex-col flex-col md:justify-start gap-8">
-          <Outlet />
+        
+        <div className="md:hidden">
+          <SideBar />
+        </div>
+        
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="mx-auto w-full max-w-[95%] md:max-w-[90%] pt-28 ">
+            <Outlet />
+          </div>
         </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
 export default Layout;

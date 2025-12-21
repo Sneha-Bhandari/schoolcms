@@ -1,222 +1,274 @@
-import React, { useState, useRef, useEffect } from "react";
-import toast from "react-hot-toast";
+import React, { useState, useEffect } from "react";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
-import AddStudentForm from "./AddStudentForm";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import ViewTestimonialData from "./ViewTestimonialData";
 import EditTestimonialData from "./EditTestimonialData";
+import Pagination from "../../Ui/Pagination";
 
-function TestimonialComponent({ initialData }) {
-  const [openMenuIndex, setOpenMenuIndex] = useState(null);
-  const [menuPosition, setMenuPosition] = useState("down"); 
-  const [showAddForm, setShowAddForm] = useState(false);
+const mockTestimonials = [
+  {
+    id: 1,
+    imageid: "/stuone.jpg",
+    name: "Sample 1",
+    grade: "Grade 8 Student",
+    rating: 4,
+    description: "Lorem ipsum dolor sit amet.",
+  },
+  {
+    id: 2,
+    imageid: "/stutwo.jpg",
+    name: "Sample 2",
+    grade: "Grade 10 Student",
+    rating: 5,
+    description: "Lorem ipsum dolor sit amet.",
+  },
+  {
+    id: 3,
+    imageid: "/stuthree.jpeg",
+    name: "Sample 3",
+    grade: "Grade 7 Student",
+    rating: 3,
+    description: "Lorem ipsum dolor sit amet.",
+  },
+  {
+    id: 4,
+    imageid: "/stutwo.jpg",
+    name: "Sample 2",
+    grade: "Grade 10 Student",
+    rating: 5,
+    description: "Lorem ipsum dolor sit amet.",
+  },
+  {
+    id: 5,
+    imageid: "/stuthree.jpeg",
+    name: "Sample 3",
+    grade: "Grade 7 Student",
+    rating: 3,
+    description: "Lorem ipsum dolor sit amet.",
+  }
+];
 
-  const menuRef = useRef(null);
+export default function TestimonialComponent() {
+  const navigate = useNavigate();
+  const params = useParams();
 
-  const [imageList, setImageList] = useState(
-    initialData || [
-      {
-        imageid: "/stuone.jpg",
-        name: "Sample Image 1",
-        grade: "Grade 8 Student",
-        rating: 4,
-        description: "Lorem ipsum dolor sit amet.",
-      },
-      {
-        imageid: "/stutwo.jpg",
-        name: "Sample Image 2",
-        grade: "Grade 10 Student",
-        rating: 5,
-        description: "Lorem ipsum dolor sit amet.",
-      },
-      {
-        imageid: "/stuthree.jpeg",
-        name: "Sample Image 3",
-        grade: "Grade 7 Student",
-        rating: 3,
-        description: "Lorem ipsum dolor sit amet.",
-      },
-      {
-        imageid: "/stufour.jpg",
-        name: "Sample Image 4",
-        grade: "Grade 9 Student",
-        rating: 4,
-        description: "Lorem ipsum dolor sit amet.",
-      },
-    ]
+  const [testimonialData, setTestimonialData] =
+    useState(mockTestimonials);
+
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuStyle, setMenuStyle] = useState({});
+  const [viewId, setViewId] = useState(null);
+  const [editId, setEditId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(testimonialData.length / itemsPerPage);
+
+  const paginatedTeam = testimonialData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
-  const [viewData, setViewData] = useState(null);
-  const [editData, setEditData] = useState(null);
+  useEffect(() => {
+    const id = parseInt(params.id);
+    if (!id) return;
 
-  const toggleMenu = (index, event) => {
-    if (openMenuIndex === index) {
-      setOpenMenuIndex(null);
-      return;
-    }
+    if (window.location.pathname.includes("/testimonial/view/"))
+      setViewId(id);
 
-    setOpenMenuIndex(index);
+    if (window.location.pathname.includes("/testimonial/edit/"))
+      setEditId(id);
+  }, [params]);
 
-    const buttonRect = event.currentTarget.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - buttonRect.bottom;
-
-    if (spaceBelow < 150) {
-      setMenuPosition("up");
-    } else {
-      setMenuPosition("down");
-    }
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
-  const handleDelete = (index) => {
-    setImageList((prev) => prev.filter((_, i) => i !== index));
-    setOpenMenuIndex(null);
-    toast.success("Deleted successfully!");
+  const openMenu = (id, e) => {
+    e.stopPropagation();
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const openUp = spaceBelow < 150;
+
+    setMenuStyle({
+      position: "fixed",
+      top: openUp ? rect.top - 120 : rect.bottom + 8,
+      left: rect.right - 140,
+      zIndex: 1000,
+    });
+
+    setOpenMenuId(openMenuId === id ? null : id);
   };
+
+  const handleDelete = (id) => {
+    if (!window.confirm("Delete this testimonial?")) return;
+
+    setTestimonialData((prev) =>
+      prev.filter((t) => t.id !== id)
+    );
+
+    toast.success("Testimonial deleted");
+    setOpenMenuId(null);
+  };
+
+  const selectedViewItem = testimonialData.find(
+    (t) => t.id === viewId
+  );
+
+  const selectedEditItem = testimonialData.find(
+    (t) => t.id === editId
+  );
 
   return (
-    <div className="md:w-11/12 w-full flex flex-col items-center justify-center md:ml-16 ml-0 py-12 mx-auto">
-      {showAddForm && (
-        <AddStudentForm
-          onSubmit={(newStudent) => {
-            setImageList([...imageList, newStudent]);
-            setShowAddForm(false);
-          }}
-          onCancel={() => setShowAddForm(false)}
-        />
-      )}
+    <div className="w-11/12 mx-auto">
 
-      <div className="pt-16 bg-white flex flex-col gap-4 p-4 sm:p-6 w-full max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
-          <div className="ml-2 sm:ml-0">
-            <h3 className="text-3xl sm:text-4xl font-semibold text-[#0B0C28]">
-              Voices of Our Students
-            </h3>
-            <p className="text-xs sm:text-sm font-thin">
-              Image, Name, Grade, Description and Rating
-            </p>
-          </div>
+      <h2 className="text-2xl font-bold text-gray-800 mb-1">
+        Voices of our Students
+      </h2>
+      <p className="text-sm text-gray-400 mb-5">
+        Testimonials: image, name, grade, rating & description.
+      </p>
 
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-[#0B0C28] hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-xl cursor-pointer"
-          >
-            Add More Students
-          </button>
-        </div>
+      <button
+        onClick={() => navigate("/testimonial/addtestimonial")}
+        className="bg-[#0B0C28] hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg mb-6"
+      >
+        Add Student
+      </button>
 
-        <div className="overflow-x-auto mt-4">
-        <table className="w-full min-w-max border border-gray-300">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 sm:p-3 border border-gray-300">Image</th>
-                <th className="p-2 sm:p-3 border border-gray-300">Name</th>
-                <th className="p-2 sm:p-3 border border-gray-300">Grade</th>
-                <th className="p-2 sm:p-3 border border-gray-300">Rating</th>
-                <th className="p-2 sm:p-3 border border-gray-300">
-                  Description
-                </th>
-                <th className="p-2 sm:p-3 border border-gray-300">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {imageList.map((item, index) => (
-                <tr
-                  key={index}
-                  className="border-b hover:bg-gray-200 text-center"
+      <div className="overflow-x-auto border border-gray-200 rounded-xl">
+        <table className="min-w-full">
+          <thead className="bg-gray-300">
+            <tr>
+              {[
+                "Image",
+                "Name",
+                "Grade",
+                "Description",
+                "Rating",
+                "Actions",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="py-4 px-6 text-xs font-semibold uppercase text-gray-600 text-left"
                 >
-                  <td className="p-2 sm:p-3 border border-gray-300">
-                    <img
-                      src={item.imageid}
-                      className="h-12 w-12 sm:h-14 sm:w-14 object-cover rounded-md mx-auto"
-                    />
-                  </td>
-                  <td className="p-2 sm:p-3 border border-gray-300">
-                    {item.name}
-                  </td>
-                  <td className="p-2 sm:p-3 border border-gray-300">
-                    {item.grade}
-                  </td>
-                  <td className="p-2 sm:p-3 border border-gray-300">
-                    {item.rating}
-                  </td>
-                  <td className="p-2 sm:p-3 border border-gray-300 truncate max-w-[200px] sm:max-w-[250px]">
-                    {item.description}
-                  </td>
-
-                  <td className="p-2 sm:p-3 border border-gray-300 relative">
-                    <button
-                      onClick={(e) => toggleMenu(index, e)}
-                      className="p-1 sm:p-2 hover:bg-gray-800 rounded-full cursor-pointer bg-[#0B0C28] text-white"
-                    >
-                      <PiDotsThreeOutlineVerticalFill size={18} />
-                    </button>
-
-                    {openMenuIndex === index && (
-                      <div>
-                        <div
-                          className="fixed inset-0 z-10"
-                          onClick={() => setOpenMenuIndex(null)}
-                        />
-                        <div
-                          ref={menuRef}
-                          className={`absolute right-0 ${
-                            menuPosition === "down" ? "top-8" : "bottom-8"
-                          } sm:right-4 shadow-lg border rounded-md w-28 bg-white z-20`}
-                        >
-                          <button
-                            onClick={() => {
-                              setViewData(item);
-                              setOpenMenuIndex(null);
-                            }}
-                            className="w-full px-2 sm:px-4 py-2 text-left hover:bg-[#0B0C28] hover:text-white"
-                          >
-                            View
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditData({ ...item, index });
-                              setOpenMenuIndex(null);
-                            }}
-                            className="w-full px-2 sm:px-4 py-2 text-left hover:bg-[#0B0C28] hover:text-white"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(index)}
-                            className="w-full px-2 sm:px-4 py-2 text-left text-red-600 hover:bg-[#0B0C28] hover:text-white"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
+                  {h}
+                </th>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+
+          <tbody className="bg-white">
+  {paginatedTeam.map((t) => ( 
+    <tr
+      key={t.id}
+      className="hover:bg-blue-100 border-b border-gray-300"
+    >
+      <td className="px-6 py-3">
+        <img
+          src={t.imageid}
+          alt={t.name}
+          className="w-14 h-14 rounded-lg object-cover"
+        />
+      </td>
+
+      <td className="px-6">{t.name}</td>
+      <td className="px-6">{t.grade}</td>
+
+      <td
+        className="px-2 max-w-[260px] truncate text-left"
+        title={t.description}
+      >
+        {t.description}
+      </td>
+
+      <td className="px-9">{t.rating}</td>
+
+      <td className="px-6 text-center">
+        <button
+          onClick={(e) => openMenu(t.id, e)}
+          className="p-2 rounded-full hover:bg-gray-100"
+        >
+          <PiDotsThreeOutlineVerticalFill />
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+        </table>
       </div>
 
-      {viewData && (
-        <ViewTestimonialData
-          item={viewData}
-          onClose={() => setViewData(null)}
+      {openMenuId && (
+        <div
+          className="fixed inset-0 z-10"
+          onClick={() => setOpenMenuId(null)}
         />
       )}
 
-      {editData && (
-        <EditTestimonialData
-          data={editData}
-          onUpdate={(updatedData) => {
-            const updatedList = [...imageList];
-            updatedList[editData.index] = updatedData;
-            setImageList(updatedList);
+      {openMenuId && (
+        <div
+          style={menuStyle}
+          className="w-32 bg-white border shadow-lg rounded-lg z-20"
+        >
+          <button
+            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+            onClick={() => {
+              setOpenMenuId(null);
+              navigate(`/testimonial/view/${openMenuId}`);
+            }}
+          >
+            View
+          </button>
+
+          <button
+            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+            onClick={() => {
+              setOpenMenuId(null);
+              navigate(`/testimonial/edit/${openMenuId}`);
+            }}
+          >
+            Edit
+          </button>
+
+          <button
+            className="block w-full text-left px-3 py-2 text-red-500 hover:bg-gray-100"
+            onClick={() => handleDelete(openMenuId)}
+          >
+            Delete
+          </button>
+        </div>
+      )}
+
+{testimonialData.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      {selectedViewItem && (
+        <ViewTestimonialData
+          item={selectedViewItem}
+          onClose={() => {
+            setViewId(null);
+            navigate("/testimonial");
           }}
-          onClose={() => setEditData(null)}
+        />
+      )}
+
+      {selectedEditItem && (
+        <EditTestimonialData
+          item={selectedEditItem}
+          onClose={() => {
+            setEditId(null);
+            navigate("/testimonial");
+          }}
         />
       )}
     </div>
   );
 }
-
-export default TestimonialComponent;

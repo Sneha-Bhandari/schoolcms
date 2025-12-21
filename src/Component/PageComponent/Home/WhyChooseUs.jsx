@@ -47,8 +47,8 @@ export default function WhyChooseUs({ initialData }) {
   };
 
   return (
-    <div className="">
-       <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-0 mb-8">
+    <div className="md:my-6 my-12">
+       <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-4 mb-8">
           <h3 className="text-xl font-semibold underline mb-2">Why Choose Us Section</h3>
           <p className="text-sm text-gray-500">
             Update the title, subtitle, image description and features for the this section.

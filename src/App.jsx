@@ -1,56 +1,90 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./HOC/Layout";
+
 import Home from "./Pages/Home";
 import About from "./Pages/About";
 import VisionAndMission from "./Pages/VisionAndMission";
 import HeroSection from "./Pages/HeroSection";
-import Team from "./Pages/Team";
-import ViewTeam from "./Component/PageComponent/Team/ViewTeam";
-import EditTeam from "./Component/PageComponent/Team/EditTeam";
 import Details from "./Pages/Details";
-import Testimonial from "./Pages/Testimonial";
-import EventTopSection from "./Component/PageComponent/Events/EventTopSection";
-import AddTeam from "./Component/PageComponent/Team/AddTeam";
 import Banner from "./Pages/Banner";
-
-import EventsTable from "./Component/PageComponent/Events/EventsTable";
-
 import OurFacilities from "./Pages/OurFacilities";
+import FAQ from "./Pages/FAQ";
 
+/* Team */
+import TeamTable from "./Component/PageComponent/Team/TeamTable";
+import AddTeam from "./Component/PageComponent/Team/AddTeam";
 
+/* Events */
+import EventTopSection from "./Component/PageComponent/Events/EventTopSection";
+import EventsTable from "./Component/PageComponent/Events/EventsTable";
+import AddEvent from "./Component/PageComponent/Events/AddEvent";
+
+/* Testimonials */
+import TestimonialComponent from "./Component/PageComponent/Testimonial/TestimonialComponent";
+import AddStudentForm from "./Component/PageComponent/Testimonial/AddStudentForm";
+
+// Blogs
+import BlogsTable from "./Component/PageComponent/Blogs/BlogsTable";
+import BlogTopSection from "./Component/PageComponent/Blogs/BlogTopSection";
+import FaqTable from "./Component/PageComponent/FAQ/FAQTable";
+import FaqAdd from "./Component/PageComponent/FAQ/FaqAdd";
 
 function App() {
   return (
-    <div>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/banner" element={<Banner />} />
+    <Routes>
+      <Route element={<Layout />}>
 
-          <Route path="/team" element={<Team />} />
-          <Route path="/addteam" element={<AddTeam />} />
-          <Route path="/team/view/:id" element={<ViewTeam />} />
-          <Route path="/team/edit/:id" element={<EditTeam />} />
+        {/* Home */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/banner" element={<Banner />} />
 
-          <Route path="/VisionAndMission" element={<VisionAndMission />} />
-          <Route path="/HeroSection" element={<HeroSection />} />
-          <Route path="/Details" element={<Details />} />
+        {/* Team */}
+        <Route path="/team" element={<TeamTable />} />
+        <Route path="/team/add" element={<AddTeam />} />
+        <Route path="/team/view/:id" element={<TeamTable />} />
+        <Route path="/team/edit/:id" element={<TeamTable />} />
 
-          <Route path="/events/event-top-section" element={<EventTopSection />}/>
-          <Route path="/events" element={<EventsTable />} />
-          <Route path="/events/:action/:id" element={<EventsTable />} />
-          {/* <Route path="/events/edit/:id" element={<EventsTable/>} /> */}
+        {/* CMS Pages */}
+        <Route path="/VisionAndMission" element={<VisionAndMission />} />
+        <Route path="/HeroSection" element={<HeroSection />} />
+        <Route path="/Details" element={<Details />} />
 
-          <Route path="/testimonial" element={<Testimonial />} />
+        {/* Events */}
+        <Route
+          path="/events/event-top-section"
+          element={<EventTopSection />}
+        />
+        <Route path="/events/eventlist" element={<EventsTable />} />
+        <Route path="/addevent" element={<AddEvent />} />
+        <Route path="/events/:action/:id" element={<EventsTable />} />
 
-      
-          <Route path="/ourfacilities" element={<OurFacilities />} />
-          <Route path="/ourfacilities/:action/:id" element={<OurFacilities />} />
-        </Route>
-      </Routes>
-    </div>
+
+        <Route path="/blogs/blog-top-section" element={<BlogTopSection />}/>
+        <Route path="/blogs/bloglist" element={<BlogsTable/>} />
+
+        {/* Testimonials */}
+        <Route path="/testimonial" element={<TestimonialComponent />} />
+        <Route path="/testimonial/addtestimonial" element={<AddStudentForm />}/>
+        <Route path="/testimonial/view/:id"  element={<TestimonialComponent />}/>
+        <Route path="/testimonial/edit/:id" element={<TestimonialComponent />}/>
+
+        {/* Other Pages */}
+        <Route path="/faq" element={<FaqTable />} />
+        <Route path="/faq/add" element={<FaqAdd />} />
+        <Route path="/faq/view/:id" element={<FaqTable />} />
+        <Route path="/faq/edit/:id" element={<FaqTable />} />
+
+
+        <Route path="/ourfacilities" element={<OurFacilities />} />
+        <Route
+          path="/ourfacilities/:action/:id"
+          element={<OurFacilities />}
+        />
+
+      </Route>
+    </Routes>
   );
 }
 

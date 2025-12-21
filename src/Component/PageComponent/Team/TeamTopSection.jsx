@@ -66,10 +66,10 @@ export default function TeamTopSection() {
   };
 
   return (
-    <div className="mb-18">
+    <div className="md:my-6 my-12">
 
        
-        <div className="w-full flex flex-col items-start justify-start mb-8">
+        <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-4 mb-8">
           <h3 className="text-xl font-semibold underline mb-2">Team Top Section</h3>
           <p className="text-sm text-gray-500">
             Update the title and description for the team top section.
@@ -77,8 +77,8 @@ export default function TeamTopSection() {
         </div>
 
        
-        <div className="">
-          <div className="w-full bg-gray-50 rounded-2xl shadow-2xl p-6 flex flex-col gap-6">
+     
+          <div className="md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl p-6 flex flex-col md:ml-15 gap-2">
             <Formik
               enableReinitialize
               initialValues={{
@@ -167,7 +167,7 @@ export default function TeamTopSection() {
               )}
             </Formik>
           </div>
-        </div>
+
       </div>
 
   );

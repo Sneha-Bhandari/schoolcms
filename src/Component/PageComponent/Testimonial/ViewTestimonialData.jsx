@@ -4,7 +4,7 @@ export default function ViewTestimonialData({ item, onClose }) {
   if (!item) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 md:left-60 top-18 md:top-18 flex items-center justify-center z-30 p-4">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-white w-full max-w-2xl sm:max-w-11/12 md:max-w-1/2 rounded-xl shadow-xl p-6 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}

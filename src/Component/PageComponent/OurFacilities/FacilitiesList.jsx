@@ -3,7 +3,10 @@ import ViewFacilities from "./ViewFacilities";
 import EditFacilities from "./EditFacilities";
 import AddFacilities from "./AddFacilities";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 const defaultFacilities = [
+
   {
     id: 1,
     icon: (
@@ -153,6 +156,18 @@ export default function FacilitiesList() {
   const selectedItem = facilities.find((i) => i.id === viewId);
   const selectedEditItem = facilities.find((i) => i.id === editId);
 
+  useEffect(() => {
+    if (selectedItem || selectedEditItem || showAddForm) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selectedItem, selectedEditItem, showAddForm]);
+
+
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this facility?")) {
       setFacilities((prev) => prev.filter((item) => item.id !== id));
@@ -194,7 +209,7 @@ export default function FacilitiesList() {
         <button
       
           onClick={() => setShowAddForm(true)}
-          className="bg-[#0B0C28] hover:bg-gray-700 text-white px-4 py-2 rounded-xl"
+          className="bg-[#0B0C28] hover:bg-gray-700 text-white px-4 py-2 rounded-xl cursor-copy"
         >
           Add More Facilities
         </button>

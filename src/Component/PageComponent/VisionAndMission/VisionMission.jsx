@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ViewVisionMission from "./ViewVisionMission";
 import EditVisionMission from "./EditVisionMission";
 
@@ -35,6 +35,16 @@ export default function VisionMission() {
   const viewItem = items.find((i) => i.id === viewId);
   const editItem = items.find((i) => i.id === editId);
 
+
+  useEffect(() => {
+    if (viewItem || editItem) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => (document.body.style.overflow = "auto");
+  }, [viewItem, editItem]);
+
   const handleUpdate = (updated) => {
     setItems((prev) =>
       prev.map((i) => (i.id === editId ? { ...i, ...updated } : i))
@@ -43,50 +53,82 @@ export default function VisionMission() {
   };
 
   return (
-    <div className=" pb-12 w-11/12 flex flex-col items-center justify-center mx-auto space-y-8">
-      <h2 className="text-xl font-semibold underline flex items-start w-full">
-        Vision & Mission Details
-      </h2>
+    <div className="pb-12 w-11/12 mx-auto space-y-6">
 
-      <div className="grid sm:grid-cols-2 gap-6 shadow-2xl rounded-2xl  md:py-12 md:px-4 px-3 py-6">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="relative group bg-white rounded-xl border-gray-200 border p-8 hover:shadow-xl transition cursor-pointer"
-          >
-            <img
-              src={item.image}
-              className="h-42 w-full object-cover rounded-lg mb-4"
-            />
-                <div className="flex gap-2">
-                <div
-              className="w-10 h-10 text-blue-600 mb-2"
-              dangerouslySetInnerHTML={{ __html: item.icon }}
-            />
+      <div>
+        <h2 className="text-xl font-semibold underline">
+          Vision & Mission Details
+        </h2>
+        <p className="text-sm text-gray-500">
+          This is the main vision and mission content
+        </p>
+      </div>
 
-            <h3 className="font-bold text-lg">{item.title}</h3>
-                </div>
-            
-            <p className="text-sm text-gray-600 line-clamp-3">
-              {item.description}
-            </p>
+      <div className="overflow-x-auto border rounded-xl shadow-md">
+        <table className="min-w-full divide-y divide-gray-200 bg-white">
+          <thead className="bg-gray-50">
+            <tr>
+              {["Image", "Icon", "Title", "Description", "Actions"].map(
+                (h) => (
+                  <th
+                    key={h}
+                    className="px-5 py-3 text-left text-xs font-semibold uppercase text-gray-600"
+                  >
+                    {h}
+                  </th>
+                )
+              )}
+            </tr>
+          </thead>
 
-            <div className="absolute top-1 right-8 flex gap-2  group-hover:opacity-100 transition">
-              <button
-                onClick={() => setViewId(item.id)}
-                className="bg-gray-200 text-xs px-3 py-1 rounded cursor-pointer"
-              >
-                View
-              </button>
-              <button
-                onClick={() => setEditId(item.id)}
-                className="bg-[#0B0C28] text-white text-xs px-3 py-1 rounded cursor-pointer"
-              >
-                Edit
-              </button>
-            </div>
-          </div>
-        ))}
+          <tbody className="divide-y divide-gray-100">
+            {items.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50 text-sm">
+
+                <td className="px-5 py-3">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-20 h-14 rounded object-cover"
+                  />
+                </td>
+
+                <td className="px-5 py-3">
+                  <div
+                    className="w-8 h-8 text-blue-600"
+                    dangerouslySetInnerHTML={{ __html: item.icon }}
+                  />
+                </td>
+
+                <td className="px-5 py-3 font-semibold">
+                  {item.title}
+                </td>
+
+                <td className="px-5 py-3 text-gray-600 line-clamp-2">
+                  {item.description}
+                </td>
+
+                <td className="px-5 py-3">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setViewId(item.id)}
+                      className="bg-gray-200 hover:bg-gray-300 text-xs px-3 py-1 rounded"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => setEditId(item.id)}
+                      className="bg-[#0B0C28] hover:bg-[#1e1f4d] text-white text-xs px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {viewItem && (

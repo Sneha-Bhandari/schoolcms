@@ -1,147 +1,177 @@
-
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import JoditEditor from "jodit-react";
 import toast from "react-hot-toast";
+import { BsImages } from "react-icons/bs";
+import { MdClose } from "react-icons/md";
+import JoditEditor from "jodit-react";
 
-const validationSchema = Yup.object({
-  imageid: Yup.string().required("Image is required"),
+const TestimonialSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   grade: Yup.string().required("Grade is required"),
   rating: Yup.number()
-    .min(1, "Rating must be at least 1")
-    .max(5, "Rating cannot exceed 5")
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5")
     .required("Rating is required"),
   description: Yup.string().required("Description is required"),
 });
 
-export default function EditTestimonialData({ data, onUpdate, onClose }) {
+export default function EditTestimonialForm({ item, onUpdate, onClose }) {
   const editor = useRef(null);
+  const [imagePreview, setImagePreview] = useState(item?.imageid || null);
 
-  if (!data) return null;
+  if (!item) return null;
+
+  const handleImageChange = (e, setFieldValue) => {
+    const file = e.target.files[0];
+    if (file) {
+      const preview = URL.createObjectURL(file);
+      setImagePreview(preview);
+      setFieldValue("image", file);
+    }
+  };
+
+  const handleSubmit = (values) => {
+    const updatedTestimonial = {
+      ...item,
+      name: values.name,
+      grade: values.grade,
+      rating: values.rating,
+      description: values.description,
+      imageid: imagePreview,
+    };
+
+    onUpdate(updatedTestimonial);
+    toast.success("Testimonial updated successfully!");
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/70 md:left-60 md:top-18 top-16 flex items-center justify-center z-30 p-4">
-      <div className="bg-white w-full md:w-11/18  rounded-lg shadow-lg p-6 space-y-3 max-h-[80vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold text-center">Edit Testimonial</h2>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
 
-        <Formik
-          enableReinitialize
-          initialValues={data}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            onUpdate(values);
-            toast.success("Testimonial updated successfully!");
-            onClose();
-          }}
-        >
-          {({ values, setFieldValue }) => (
-            <Form className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <label className="font-medium text-gray-500">Image Upload</label>
-                <label htmlFor="imageid" className="w-fit cursor-pointer">
-                  <img
-                    src={values.imageid}
-                    className="h-32 w-40 object-cover rounded-md border"
+        <div className="flex items-center justify-between p-6 border-b ">
+          <h2 className="text-xl font-semibold ">Edit Testimonial</h2>
+          <button onClick={onClose}>
+            <span className="bg-red-500 px-2 py-1 cursor-pointer duration-500 rounded-full text-white hover:bg-black transition">
+              X
+            </span>
+          </button>
+        </div>
+
+        <div className="p-6">
+          <Formik
+            enableReinitialize
+            initialValues={{
+              name: item.name || "",
+              grade: item.grade || "",
+              rating: item.rating || 1,
+              description: item.description || "",
+              image: null,
+            }}
+            validationSchema={TestimonialSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ setFieldValue, values }) => (
+              <Form className="space-y-6">
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2">
+                    Student Image
+                  </label>
+                  <div className="border-2 border-dashed rounded-lg p-4 text-center">
+                    {imagePreview ? (
+                      <>
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-32 h-32 mx-auto rounded-lg object-cover mb-3"
+                        />
+                        <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex items-center gap-2">
+                          <BsImages /> Change Image
+                          <input
+                            type="file"
+                            hidden
+                            accept="image/*"
+                            onChange={(e) =>
+                              handleImageChange(e, setFieldValue)
+                            }
+                          />
+                        </label>
+                      </>
+                    ) : (
+                      <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex gap-2">
+                        <BsImages /> Upload Image
+                        <input
+                          type="file"
+                          hidden
+                          accept="image/*"
+                          onChange={(e) =>
+                            handleImageChange(e, setFieldValue)
+                          }
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-semibold">Name *</label>
+                  <Field className="w-full border px-3 py-2 rounded-lg" name="name" />
+                  <ErrorMessage name="name" component="div" className="text-red-600 text-sm" />
+                </div>
+
+                <div>
+                  <label className="font-semibold">Grade *</label>
+                  <Field className="w-full border px-3 py-2 rounded-lg" name="grade" />
+                  <ErrorMessage name="grade" component="div" className="text-red-600 text-sm" />
+                </div>
+
+                <div>
+                  <label className="font-semibold">Rating (1–5) *</label>
+                  <Field
+                    type="number"
+                    min="1"
+                    max="5"
+                    name="rating"
+                    className="w-full border px-3 py-2 rounded-lg"
                   />
-                </label>
-                <input
-                  id="imageid"
-                  name="imageid"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => setFieldValue("imageid", reader.result);
-                      reader.readAsDataURL(file);
+                  <ErrorMessage name="rating" component="div" className="text-red-600 text-sm" />
+                </div>
+
+                <div>
+                  <label className="font-semibold">Description *</label>
+                  <JoditEditor
+                    ref={editor}
+                    value={values.description}
+                    onChange={(content) =>
+                      setFieldValue("description", content)
                     }
-                  }}
-                />
-                <ErrorMessage
-                  name="imageid"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+                    config={{ height: 200 }}
+                  />
+                  <ErrorMessage name="description" component="div" className="text-red-600 text-sm" />
+                </div>
 
-              <div className="flex flex-col">
-                <label className="font-medium">Name</label>
-                <Field name="name" className="border px-3 py-2 rounded-md" />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg"
+                  >
+                    Update
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 rounded-lg"
+                  >
+                    Cancel
+                  </button>
+                </div>
 
-              <div className="flex flex-col">
-                <label className="font-medium">Grade</label>
-                <Field name="grade" className="border px-3 py-2 rounded-md" />
-                <ErrorMessage
-                  name="grade"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="font-medium">Rating (1-5)</label>
-                <Field
-                  name="rating"
-                  type="number"
-                  min="1"
-                  max="5"
-                  className="border px-3 py-2 rounded-md"
-                />
-                <ErrorMessage
-                  name="rating"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="font-medium">Description</label>
-                <Field name="description">
-                  {({ field, form }) => (
-                    <JoditEditor
-                      ref={editor}
-                      value={field.value}
-                      onChange={(content) => form.setFieldValue("description", content)}
-                      config={{ readonly: false, height: 200 }}
-                    />
-                  )}
-                </Field>
-                <ErrorMessage
-                  name="description"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-
-              <div className="flex justify-between">
-              <button
-                  type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded-md cursor-pointer"
-                >
-                  Save Changes
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-pointer"
-                >
-                  Cancel
-                </button>
-                
-              </div>
-            </Form>
-          )}
-        </Formik>
+              </Form>
+            )}
+          </Formik>
+        </div>
       </div>
     </div>
   );

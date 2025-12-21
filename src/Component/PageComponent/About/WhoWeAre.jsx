@@ -46,8 +46,8 @@ export default function WhoWeAre({ initialData }) {
   };
 
   return (
-    <div className="flex flex-col w-full md:pb-24 pb-8">
-      <div className=" flex flex-col  mb-8 items-start">
+    <div className="md:my-6 ">
+      <div className=" md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-4 mb-8">
         <h3 className="text-xl font-semibold underline mb-2">
           Who We Are Section
         </h3>
@@ -55,11 +55,11 @@ export default function WhoWeAre({ initialData }) {
           Update title, image content, description and features.
         </p>
       </div>
-<div className="md:w-[120vh] w-full">
+
   
 
       {!editMode ? (
-        <div className=" shadow-2xl rounded-xl p-6  w-full">
+        <div className=" md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl p-6 flex flex-col md:ml-15 gap-2">
           <h1 className="text-md font-semibold text-gray-500">
             Title: <span className="text-black">{data.title}</span>
           </h1>
@@ -230,7 +230,7 @@ export default function WhoWeAre({ initialData }) {
           </Formik>
         </div>
       )}
-      </div>
+    
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function EventsTable() {
       eventdate: "2025-01-05",
       eventlocation: "Birgunj",
       eventdescription: "A major tech event with speakers from all over Nepal.",
-      eventimageid: { imageurl: "https://via.placeholder.com/150" }
+      eventimageid: "/stuone.jpg"
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ export default function EventsTable() {
       eventdate: "2025-02-12",
       eventlocation: "Kathmandu",
       eventdescription: "Learn full-stack development in 2 weeks.",
-      eventimageid: { imageurl: "https://via.placeholder.com/150" }
+      eventimageid: "/stuone.jpg"
     },
     {
       id: 3,
@@ -33,7 +33,7 @@ export default function EventsTable() {
       eventdate: "2024-12-10",
       eventlocation: "Pokhara",
       eventdescription: "A creative workshop focusing on UI/UX.",
-      eventimageid: { imageurl: "https://via.placeholder.com/150" }
+      eventimageid: "/stuone.jpg"
     },
     {
       id: 4,
@@ -42,7 +42,7 @@ export default function EventsTable() {
       eventdate: "2024-12-10",
       eventlocation: "Pokhara",
       eventdescription: "A creative workshop focusing on UI/UX.",
-      eventimageid: { imageurl: "https://via.placeholder.com/150" }
+      eventimageid:"/stuone.jpg"
     },
     {
       id: 5,
@@ -51,7 +51,7 @@ export default function EventsTable() {
       eventdate: "2024-12-10",
       eventlocation: "Pokhara",
       eventdescription: "A creative workshop focusing on UI/UX.",
-      eventimageid: { imageurl: "https://via.placeholder.com/150" }
+      eventimageid: "/stuone.jpg"
     }
   ]);
 
@@ -167,7 +167,7 @@ export default function EventsTable() {
                 <tr key={event.id} className="hover:bg-gray-50 text-sm">
                   <td className="py-3 px-5">
                     <img
-                      src={event.eventimageid.imageurl}
+                      src={event.eventimageid}
                       alt={event.title}
                       className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
                     />

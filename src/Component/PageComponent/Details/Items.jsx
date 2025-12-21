@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ViewItems from "./ViewItems";
 import EditItems from "./EditItems";
+import { useEffect } from "react";
+
 
 const defaultFacilities = [
   {
@@ -57,6 +59,20 @@ export default function Items() {
     setEditId(null);
   };
 
+  useEffect(() => {
+    if (selectedItem || selectedEditItem ) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selectedItem, selectedEditItem]);
+
+  
+
+
   return (
     <div className="w-full gap-12 flex flex-col mx-auto md:ml-6 my-6">
       <div>
@@ -71,11 +87,11 @@ export default function Items() {
           {facilities.map((item) => (
             <div
               key={item.id}
-              className="relative group bg-white rounded-xl p-6 border hover:shadow-xl transition"
+              className="relative group bg-white rounded-xl p-6 border border-gray-300 hover:shadow-xl transition cursor-pointer"
             >
               <div className="h-[150px] flex flex-col justify-between">
                 <div
-                  className="w-12 h-12 text-blue-600"
+                  className="w-12 h-12 "
                   dangerouslySetInnerHTML={{ __html: item.icon }}
                 />
 
@@ -83,7 +99,11 @@ export default function Items() {
                 <p className="text-sm text-gray-600">{item.description}</p>
               </div>
 
-              <div className="absolute top-3 right-3 flex gap-2  group-hover:opacity-100 transition">
+              <div className="absolute top-2 right-3 flex gap-1
+             opacity-100 md:opacity-0
+             translate-y-0 md:translate-y-3
+             md:group-hover:opacity-100 md:group-hover:translate-y-0
+             transition-all duration-300">
                 <button
                   onClick={() => setViewId(item.id)}
                   className="bg-gray-200 text-xs px-3 py-1 rounded"

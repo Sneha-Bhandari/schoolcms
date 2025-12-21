@@ -3,12 +3,12 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { MdCloudUpload, MdClose, MdImage } from "react-icons/md";
+import { MdCloudUpload, MdClose } from "react-icons/md";
 
 const TeamSchema = Yup.object().shape({
+  image: Yup.string().required("Image is required"),
   name: Yup.string().required("Name is required"),
   position: Yup.string().required("Position is required"),
-  description: Yup.string().required("Description is required"),
   facebooklink: Yup.string().url("Must be a valid URL").nullable(),
   instagramlink: Yup.string().url("Must be a valid URL").nullable(),
   linkedinlink: Yup.string().url("Must be a valid URL").nullable(),
@@ -16,59 +16,50 @@ const TeamSchema = Yup.object().shape({
 
 export default function AddTeam() {
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [availableImages, setAvailableImages] = useState([]);
-  const [uploadingNewImage, setUploadingNewImage] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  const handleSubmit = (values, { resetForm }) => {
-    if (!selectedImage) {
-      toast.error("Please select a profile image");
-      return;
-    }
-
-    const payload = {
-      ...values,
-      image: selectedImage,
-    };
-
-    console.log("Team Member Data:", payload);
-    toast.success("Team member added successfully!");
-    resetForm();
-    setSelectedImage(null);
-    navigate("/team");
-  };
-
-  const handleImageSelect = (image) => setSelectedImage(image);
-  const clearImage = () => setSelectedImage(null);
-
-  const handleNewImageUpload = (event) => {
-    const file = event.target.files[0];
+  const handleImageChange = (e, setFieldValue) => {
+    const file = e.target.files[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file");
+      toast.error("Please select a valid image");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
+    setFieldValue("image", file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = (values, { resetForm }) => {
+    if (!imagePreview) {
+      toast.error("Please upload an image");
       return;
     }
 
-    setUploadingNewImage(true);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const newImage = {
-        id: Date.now(),
-        imageurl: reader.result,
-      };
-      setAvailableImages((prev) => [...prev, newImage]);
-      setSelectedImage(newImage);
-      toast.success("Image uploaded successfully!");
-      setUploadingNewImage(false);
+    const newMember = {
+      id: Date.now(),
+      name: values.name,
+      position: values.position,
+      facebooklink: values.facebooklink || "",
+      instagramlink: values.instagramlink || "",
+      linkedinlink: values.linkedinlink || "",
+      imageid: {
+        imageurl: imagePreview,
+      },
     };
-    reader.readAsDataURL(file);
+
+    const existing =
+      JSON.parse(localStorage.getItem("teamData")) || [];
+
+    localStorage.setItem(
+      "teamData",
+      JSON.stringify([...existing, newMember])
+    );
+
+    toast.success("Team member added successfully!");
+    resetForm();
+    navigate("/team");
   };
 
   return (
@@ -85,7 +76,7 @@ export default function AddTeam() {
           </div>
           <button
             onClick={() => navigate("/team")}
-            className="bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold py-2.5 px-6 rounded-full transition focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            className="bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold py-2.5 px-6 rounded-full"
           >
             Back to Team
           </button>
@@ -95,194 +86,116 @@ export default function AddTeam() {
           initialValues={{
             name: "",
             position: "",
-            description: "",
             facebooklink: "",
             instagramlink: "",
             linkedinlink: "",
+            image: null,
           }}
           validationSchema={TeamSchema}
           onSubmit={handleSubmit}
         >
-          {({ handleSubmit }) => (
-            <Form onSubmit={handleSubmit} className="space-y-6">
+          {({ setFieldValue }) => (
+            <Form className="space-y-6">
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2">
                     Full Name *
                   </label>
                   <Field
                     name="name"
-                    type="text"
-                    placeholder="Enter full name"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full border rounded-lg px-4 py-3"
                   />
                   <ErrorMessage
                     name="name"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className="text-red-500 text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2">
                     Position *
                   </label>
                   <Field
                     name="position"
-                    type="text"
-                    placeholder="Enter position"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full border rounded-lg px-4 py-3"
                   />
                   <ErrorMessage
                     name="position"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className="text-red-500 text-sm"
                   />
                 </div>
               </div>
 
+              
+              {/* Image Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description *
-                </label>
-                <Field
-                  as="textarea"
-                  name="description"
-                  rows="4"
-                  placeholder="Describe team member’s background and role"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-vertical"
-                />
-                <ErrorMessage
-                  name="description"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-
-              {/* Image Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2">
                   Profile Image *
                 </label>
 
-                {selectedImage ? (
-                  <div className="mb-4">
-                    <div className="flex items-center gap-4 mb-3">
-                      <span className="text-sm text-green-600 font-medium">
-                        Selected Image:
-                      </span>
-                      <button
-                        type="button"
-                        onClick={clearImage}
-                        className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
-                      >
-                        <MdClose size={16} /> Remove
-                      </button>
-                    </div>
+                {imagePreview ? (
+                  <div className="flex items-center gap-4">
                     <img
-                      src={selectedImage.imageurl}
-                      alt="Selected"
-                      className="w-24 h-24 object-cover rounded-md border"
+                      src={imagePreview}
+                      className="w-24 h-24 object-cover rounded-lg"
+                      alt="preview"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setImagePreview(null)}
+                      className="text-red-600 flex items-center gap-1"
+                    >
+                      <MdClose /> Remove
+                    </button>
                   </div>
                 ) : (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
-                    <MdCloudUpload
-                      className="mx-auto text-gray-400 mb-3"
-                      size={48}
+                  <label className="border-2 border-dashed rounded-lg p-6 block text-center cursor-pointer">
+                    <MdCloudUpload size={40} className="mx-auto mb-2" />
+                    Upload Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) =>
+                        handleImageChange(e, setFieldValue)
+                      }
                     />
-                    <p className="text-gray-500 mb-2">No image selected</p>
-                  </div>
-                )}
-
-                <div className="mt-4">
-                  <label className="text-sm text-gray-700 font-medium mb-2 block">
-                    Upload New Image
                   </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleNewImageUpload}
-                    disabled={uploadingNewImage}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                </div>
-
-                {availableImages.length > 0 && (
-                  <div className="mt-4">
-                    <h3 className="text-sm font-medium text-gray-700 mb-3">
-                      Available Images
-                    </h3>
-                    <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto">
-                      {availableImages.map((img) => (
-                        <img
-                          key={img.id}
-                          src={img.imageurl}
-                          alt={`Image ${img.id}`}
-                          className={`w-full h-20 object-cover rounded-lg cursor-pointer border-2 ${
-                            selectedImage?.id === img.id
-                              ? "border-red-500"
-                              : "border-gray-200"
-                          }`}
-                          onClick={() => handleImageSelect(img)}
-                        />
-                      ))}
-                    </div>
-                  </div>
                 )}
               </div>
 
-              {/* Social Links */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Facebook
-                  </label>
-                  <Field
-                    name="facebooklink"
-                    type="url"
-                    placeholder="https://facebook.com/username"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Instagram
-                  </label>
-                  <Field
-                    name="instagramlink"
-                    type="url"
-                    placeholder="https://instagram.com/username"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    LinkedIn
-                  </label>
-                  <Field
-                    name="linkedinlink"
-                    type="url"
-                    placeholder="https://linkedin.com/in/username"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  />
-                </div>
+                <Field
+                  name="facebooklink"
+                  placeholder="Facebook URL"
+                  className="border rounded-lg px-4 py-3"
+                />
+                <Field
+                  name="instagramlink"
+                  placeholder="Instagram URL"
+                  className="border rounded-lg px-4 py-3"
+                />
+                <Field
+                  name="linkedinlink"
+                  placeholder="LinkedIn URL"
+                  className="border rounded-lg px-4 py-3"
+                />
               </div>
 
-              {/* Submit */}
-              <div className="flex gap-3 pt-4 border-t">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-3 px-8 rounded-full transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  className="bg-[#0B0C28] hover:bg-blue-700 text-white px-8 py-3 rounded-xl cursor-pointer duration-500"
                 >
                   Create Team Member
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate("/team")}
-                  className="bg-gray-500 hover:bg-gray-600 text-white text-sm font-semibold py-3 px-6 rounded-full transition focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                  className="bg-gray-500 hover:bg-gray-400 text-white px-6 py-3 rounded-xl cursor-pointer duration-500"
                 >
                   Cancel
                 </button>

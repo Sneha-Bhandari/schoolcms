@@ -87,8 +87,9 @@ function ImageUpload() {
                   </div>
                 ))}
 
-                <label className="cursor-pointer flex items-center justify-center bg-gray-200 h-40 w-64 rounded-md border border-gray-300">
+                <label className="cursor-pointer flex flex-col items-center justify-center bg-gray-200 h-40 w-64 rounded-md border border-gray-300 gap-2">
                   <MdOutlineBrowserUpdated className="text-3xl text-gray-600" />
+                  <h1>Upload More Image</h1>
                   <input
                     type="file"
                     accept="image/*"

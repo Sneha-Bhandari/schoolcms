@@ -37,12 +37,12 @@ function TruncatedDescription({ htmlContent }) {
   );
 }
 
-export default function EventTopSection() {
+export default function BlogTopSection() {
   const editor = useRef(null);
 
   const [aboutItem, setAboutItem] = useState({
     id: 1,
-    title: "School's Events",
+    title: "Blog's Events",
     description: "<p>Explore stories, updates, and tips from our vibrant school community</p>",
   });
 
@@ -66,9 +66,9 @@ export default function EventTopSection() {
       <div className="flex flex-col items-center gap-10">
        
         <div className="w-11/12 flex flex-col items-start justify-start ">
-          <h3 className="text-xl font-semibold underline mb-2">Event Top Section</h3>
+          <h3 className="text-xl font-semibold underline mb-2">Blog Top Section</h3>
           <p className="text-sm text-gray-500">
-            Update the title and description for the events section.
+            Update the title and description for the blogs section.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default function EventTopSection() {
                           onClick={() => setShowUpdateForm(true)}
                           className="bg-[#0B0C28] hover:bg-blue-700 transition-colors text-white text-sm font-semibold py-2.5 px-6 rounded-xl cursor-pointer duration-700"
                         >
-                          Update Events Section
+                          Update Blogs Section
                         </button>
                       </div>
                     </>

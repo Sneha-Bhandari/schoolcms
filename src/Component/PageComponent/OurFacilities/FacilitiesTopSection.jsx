@@ -62,10 +62,10 @@ export default function FacilitiesTopSection() {
   };
 
   return (
-    <div  className="w-full md:ml-15 ml-0 my-12">
+    <div  className="my-12">
      
        
-        <div className="w-full flex flex-col items-start justify-start mb-6 ">
+        <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-8 mb-8 ">
           <h3 className="text-xl font-semibold underline mb-2">Facility Top Section</h3>
           <p className="text-sm text-gray-500">
             Update the title and description for the faculty section.
@@ -73,8 +73,8 @@ export default function FacilitiesTopSection() {
         </div>
 
        
-        <div className="md:w-11/13  w-full">
-          <div className="w-full bg-gray-50 rounded-2xl shadow-2xl p-6 flex flex-col gap-6">
+        
+          <div className="md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl p-6 flex flex-col md:ml-15 gap-2">
             <Formik
               enableReinitialize
               initialValues={{
@@ -163,7 +163,7 @@ export default function FacilitiesTopSection() {
             </Formik>
           </div>
         </div>
-      </div>
+
    
   );
 }

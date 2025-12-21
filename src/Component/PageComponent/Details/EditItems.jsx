@@ -105,14 +105,14 @@ export default function EditItems({ item, onUpdate, onClose }) {
               <div className="flex justify-start gap-3 pt-2">
                 <button
                   type="submit"
-                  className="bg-[#0B0C28] text-white px-4 py-2 rounded-md"
+                  className="bg-[#0B0C28] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-blue-600 duration-500"
                 >
                   Update
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-md"
+                  className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-pointer"
                 >
                   Cancel
                 </button>

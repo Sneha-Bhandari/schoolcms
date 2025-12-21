@@ -28,8 +28,8 @@ export default function Message({ initialData }) {
   const [editMode, setEditMode] = useState(false);
 
   return (
-    <div className="my-12">
-      <div className="md:w-fit flex flex-col items-start justify-start md:ml-16 ml-0 mb-8">
+    <div className="md:my-6 my-12">
+      <div className="md:w-fit flex flex-col items-start justify-start md:ml-16 ml-8 mb-8">
         <h3 className="text-xl font-semibold underline mb-2">Message Section</h3>
         <p className="text-sm text-gray-500">
           Update the title, description, image, signature, and name for this section.

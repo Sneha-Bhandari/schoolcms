@@ -19,7 +19,7 @@ export default function EditVisionMission({ item, onUpdate, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-30 top-18 overflow-auto">
-      <div className="bg-white md:w-1/2 w-4/5 px-6 py-4 rounded-xl max-h-[90vh] overflow-y-auto md:ml-50 ml-0">
+      <div className="bg-white md:w-1/2 w-4/5 px-6 py-4 rounded-xl max-h-[90vh] overflow-y-auto md:ml-50 ml-0 mt-12 ">
         <h2 className="text-xl font-semibold mb-4 text-center">
           Edit {item.type}
         </h2>
