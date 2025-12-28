@@ -5,6 +5,13 @@ import toast from "react-hot-toast";
 import ViewTestimonialData from "./ViewTestimonialData";
 import EditTestimonialData from "./EditTestimonialData";
 import Pagination from "../../Ui/Pagination";
+import {
+  MdAdd,
+  MdMoreVert,
+  MdVisibility,
+  MdDelete,
+  MdEdit,
+} from "react-icons/md";
 
 const mockTestimonials = [
   {
@@ -46,15 +53,14 @@ const mockTestimonials = [
     grade: "Grade 7 Student",
     rating: 3,
     description: "Lorem ipsum dolor sit amet.",
-  }
+  },
 ];
 
 export default function TestimonialComponent() {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [testimonialData, setTestimonialData] =
-    useState(mockTestimonials);
+  const [testimonialData, setTestimonialData] = useState(mockTestimonials);
 
   const [openMenuId, setOpenMenuId] = useState(null);
   const [menuStyle, setMenuStyle] = useState({});
@@ -74,11 +80,9 @@ export default function TestimonialComponent() {
     const id = parseInt(params.id);
     if (!id) return;
 
-    if (window.location.pathname.includes("/testimonial/view/"))
-      setViewId(id);
+    if (window.location.pathname.includes("/testimonial/view/")) setViewId(id);
 
-    if (window.location.pathname.includes("/testimonial/edit/"))
-      setEditId(id);
+    if (window.location.pathname.includes("/testimonial/edit/")) setEditId(id);
   }, [params]);
 
   const handlePageChange = (page) => {
@@ -106,25 +110,18 @@ export default function TestimonialComponent() {
   const handleDelete = (id) => {
     if (!window.confirm("Delete this testimonial?")) return;
 
-    setTestimonialData((prev) =>
-      prev.filter((t) => t.id !== id)
-    );
+    setTestimonialData((prev) => prev.filter((t) => t.id !== id));
 
     toast.success("Testimonial deleted");
     setOpenMenuId(null);
   };
 
-  const selectedViewItem = testimonialData.find(
-    (t) => t.id === viewId
-  );
+  const selectedViewItem = testimonialData.find((t) => t.id === viewId);
 
-  const selectedEditItem = testimonialData.find(
-    (t) => t.id === editId
-  );
+  const selectedEditItem = testimonialData.find((t) => t.id === editId);
 
   return (
     <div className="w-11/12 mx-auto">
-
       <h2 className="text-2xl font-bold text-gray-800 mb-1">
         Voices of our Students
       </h2>
@@ -162,42 +159,42 @@ export default function TestimonialComponent() {
           </thead>
 
           <tbody className="bg-white">
-  {paginatedTeam.map((t) => ( 
-    <tr
-      key={t.id}
-      className="hover:bg-blue-100 border-b border-gray-300"
-    >
-      <td className="px-6 py-3">
-        <img
-          src={t.imageid}
-          alt={t.name}
-          className="w-14 h-14 rounded-lg object-cover"
-        />
-      </td>
+            {paginatedTeam.map((t) => (
+              <tr
+                key={t.id}
+                className="hover:bg-blue-100 border-b border-gray-300"
+              >
+                <td className="px-6 py-3">
+                  <img
+                    src={t.imageid}
+                    alt={t.name}
+                    className="w-14 h-14 rounded-lg object-cover"
+                  />
+                </td>
 
-      <td className="px-6">{t.name}</td>
-      <td className="px-6">{t.grade}</td>
+                <td className="px-6">{t.name}</td>
+                <td className="px-6">{t.grade}</td>
 
-      <td
-        className="px-2 max-w-[260px] truncate text-left"
-        title={t.description}
-      >
-        {t.description}
-      </td>
+                <td
+                  className="px-2 max-w-[260px] truncate text-left"
+                  title={t.description}
+                >
+                  {t.description}
+                </td>
 
-      <td className="px-9">{t.rating}</td>
+                <td className="px-9">{t.rating}</td>
 
-      <td className="px-6 text-center">
-        <button
-          onClick={(e) => openMenu(t.id, e)}
-          className="p-2 rounded-full hover:bg-gray-100"
-        >
-          <PiDotsThreeOutlineVerticalFill />
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+                <td className="px-6 text-center">
+                  <button
+                    onClick={(e) => openMenu(t.id, e)}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
+                    <PiDotsThreeOutlineVerticalFill />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 
@@ -214,35 +211,35 @@ export default function TestimonialComponent() {
           className="w-32 bg-white border shadow-lg rounded-lg z-20"
         >
           <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-blue-700 text-sm"
             onClick={() => {
               setOpenMenuId(null);
               navigate(`/testimonial/view/${openMenuId}`);
             }}
           >
-            View
+            <MdVisibility size={16} /> View
           </button>
 
           <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-green-700 text-sm"
             onClick={() => {
               setOpenMenuId(null);
               navigate(`/testimonial/edit/${openMenuId}`);
             }}
           >
-            Edit
+            <MdEdit size={16} /> Edit
           </button>
 
           <button
-            className="block w-full text-left px-3 py-2 text-red-500 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-red-700 text-sm"
             onClick={() => handleDelete(openMenuId)}
           >
-            Delete
+            <MdDelete size={16} /> Delete
           </button>
         </div>
       )}
 
-{testimonialData.length > itemsPerPage && (
+      {testimonialData.length > itemsPerPage && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

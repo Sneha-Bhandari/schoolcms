@@ -3,12 +3,16 @@ import { Link, useLocation } from "react-router-dom";
 import { VscThreeBars } from "react-icons/vsc";
 import { FaHome, FaDotCircle } from "react-icons/fa";
 import { BiFoodMenu } from "react-icons/bi";
-import { IoIosContact, IoIosArrowDown } from "react-icons/io";
-import { MdOutlineDescription, MdDesktopWindows, MdMiscellaneousServices } from "react-icons/md";
+import {IoIosArrowDown } from "react-icons/io";
+import { MdOutlineDescription, MdDesktopWindows, MdMiscellaneousServices,MdEventNote } from "react-icons/md";
 import { TiInfoOutline } from "react-icons/ti";
 import { PiTelevision } from "react-icons/pi";
 import { FiUsers } from "react-icons/fi";
 import { BsCardHeading } from "react-icons/bs";
+import { LuContact } from "react-icons/lu";
+import { IoIosInformationCircle } from "react-icons/io";
+import { TfiGallery } from "react-icons/tfi";
+import { MdOutlineChromeReaderMode } from "react-icons/md";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +25,7 @@ const SideBar = () => {
     { title: "About", path: "/about", icons: <MdOutlineDescription /> },
     { title: "Team", path: "/team", icons: <FiUsers /> },
     { title: "Banner", path: "/banner", icons: <BsCardHeading /> },
+    { title: "Gallery", path: "/gallery", icons: <TfiGallery /> }
   ];
 
   const nextnav = [
@@ -30,6 +35,8 @@ const SideBar = () => {
     { title: "VisionAndMission", path: "/visionAndmission", icons: <PiTelevision /> },
     { title: "Testimonial", path: "/testimonial", icons: <BiFoodMenu /> },
     { title: "FAQ", path: "/faq", icons: <MdDesktopWindows /> },
+    { title: "Curriculum", path: "/curriculum", icons: <MdOutlineChromeReaderMode /> },
+    { title: "Contact", path: "/contact", icons: <LuContact /> },
   ];
 
   const blogsDropdown = [
@@ -64,7 +71,7 @@ const SideBar = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:top-18 md:w-56 md:translate-x-0`}
       >
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-300 text-[#0B0C28] bg-blue-50 sticky top-0 z-20">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-300 text-[#0B0C28] bg-blue-50 sticky top-0 z-20">
           <VscThreeBars size={18} />
           <h1 className="text-base font-semibold uppercase tracking-wide">Pages</h1>
         </div>
@@ -84,12 +91,73 @@ const SideBar = () => {
           ))}
         </ul>
 
-        <div className="flex items-center gap-3 px-4 py-4 text-[#0B0C28] bg-blue-50 border-y border-gray-300 sticky top-14 z-10">
+        <div className="flex items-center gap-3 px-4 py-3 mb-4 text-[#0B0C28] bg-blue-50 border-y border-gray-300 sticky top-14 z-10">
           <VscThreeBars size={18} />
           <h2 className="text-base font-semibold uppercase tracking-wide">Layout</h2>
         </div>
 
-        <ul className="mx-2">
+      
+        <div className="mx-2">
+          <button
+            onClick={() => setEventDrop(!eventDrop)}
+            className="w-full flex justify-between items-center rounded-sm px-6 py-2 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+          >
+            <div className="flex items-center gap-3">
+              <MdEventNote />
+              <span className="text-md font-medium">Events</span>
+            </div>
+            <IoIosArrowDown className={`transition-transform duration-500 ${eventDrop ? "rotate-180" : ""}`} />
+          </button>
+
+          {eventDrop && (
+            <ul className="text-black w-42 ml-5 my-4 max-h-60 overflow-y-auto">
+              {eventsDropdown.map((event, idx) => (
+                <li key={idx} className="">
+                  <Link
+                    to={event.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2  hover:bg-blue-100 w-full`}
+                  >
+                    <FaDotCircle size={6} />
+                    <span className="text-sm font-semibold">{event.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="mx-2">
+          <button
+            onClick={() => setBlogDrop(!blogDrop)}
+            className="w-full flex justify-between items-center rounded-sm px-6 py-2 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+          >
+            <div className="flex items-center gap-3">
+              <IoIosInformationCircle />
+              <span className="text-md font-medium">Blogs</span>
+            </div>
+            <IoIosArrowDown className={`transition-transform duration-500 ${blogDrop ? "rotate-180" : ""}`} />
+          </button>
+
+          {blogDrop && (
+            <ul className=" text-black w-42 ml-5 my-4 max-h-60 overflow-y-auto">
+              {blogsDropdown.map((blog, idx) => (
+                <li key={idx} className="">
+                  <Link
+                    to={blog.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-1.5  hover:bg-blue-100 w-full`}
+                  >
+                    <FaDotCircle size={6} />
+                    <span className="text-sm font-semibold">{blog.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <ul className="mx-2 mb-6">
           {nextnav.map((item, index) => (
             <li key={index} className="w-full">
               <Link
@@ -104,65 +172,6 @@ const SideBar = () => {
           ))}
         </ul>
 
-        <div className="mx-2">
-          <button
-            onClick={() => setEventDrop(!eventDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-6 py-3 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
-          >
-            <div className="flex items-center gap-3">
-              <IoIosContact />
-              <span className="text-md font-medium">Events</span>
-            </div>
-            <IoIosArrowDown className={`transition-transform duration-500 ${eventDrop ? "rotate-180" : ""}`} />
-          </button>
-
-          {eventDrop && (
-            <ul className="bg-[#0B0C28] w-48 ml-5 mt-1 max-h-64 overflow-y-auto">
-              {eventsDropdown.map((event, idx) => (
-                <li key={idx} className="w-fit">
-                  <Link
-                    to={event.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-3 text-white hover:text-gray-300`}
-                  >
-                    <FaDotCircle size={6} />
-                    <span className="text-sm font-semibold">{event.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="mx-2">
-          <button
-            onClick={() => setBlogDrop(!blogDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-6 py-3 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
-          >
-            <div className="flex items-center gap-3">
-              <IoIosContact />
-              <span className="text-md font-medium">Blogs</span>
-            </div>
-            <IoIosArrowDown className={`transition-transform duration-500 ${blogDrop ? "rotate-180" : ""}`} />
-          </button>
-
-          {blogDrop && (
-            <ul className="bg-[#0B0C28] w-48 ml-5 mt-1 max-h-64 overflow-y-auto">
-              {blogsDropdown.map((blog, idx) => (
-                <li key={idx} className="w-fit">
-                  <Link
-                    to={blog.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-3 text-white hover:text-gray-300`}
-                  >
-                    <FaDotCircle size={6} />
-                    <span className="text-sm font-semibold">{blog.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       </div>
 
       {isOpen && (

@@ -11,10 +11,6 @@ const validationSchema = Yup.object({
     .required("Title is required")
     .min(2, "Title must be at least 2 characters")
     .max(100, "Title must not exceed 100 characters"),
-  subtitle: Yup.string()
-    .required("Subtitle is required")
-    .min(2, "Subtitle must at least 2 characters")
-    .max(200, "Subtitle must not exceed 200 characters"),
   description: Yup.string()
     .required("Description is required")
     .min(10, "Description must be at least 10 characters"),
@@ -83,7 +79,6 @@ export default function TestimonialTopSection() {
               enableReinitialize
               initialValues={{
                 title: aboutItem?.title || "",
-                subtitle: aboutItem?.subtitle || "",
                 description: aboutItem?.description || "",
               }}
               validationSchema={validationSchema}
@@ -113,7 +108,7 @@ export default function TestimonialTopSection() {
                           onClick={() => setShowUpdateForm(true)}
                           className="bg-[#0B0C28] hover:bg-blue-700 transition-colors text-white text-sm font-semibold py-2.5 px-6 rounded-xl cursor-pointer duration-700"
                         >
-                          Update Team Top Section Details
+                          Update Testimonial Top Section Details
                         </button>
                       </div>
                     </>

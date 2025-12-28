@@ -53,7 +53,7 @@ export default function VisionMission() {
   };
 
   return (
-    <div className="pb-12 w-11/12 mx-auto space-y-6">
+    <div className="pb-12 w-11/12 mx-auto space-y-9">
 
       <div>
         <h2 className="text-xl font-semibold underline">
@@ -64,9 +64,9 @@ export default function VisionMission() {
         </p>
       </div>
 
-      <div className="overflow-x-auto border rounded-xl shadow-md">
-        <table className="min-w-full divide-y divide-gray-200 bg-white">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto border border-gray-200 rounded-xl shadow-md">
+        <table className="min-w-full divide-y divide-gray-200 bg-white ">
+          <thead className="bg-gray-300 x">
             <tr>
               {["Image", "Icon", "Title", "Description", "Actions"].map(
                 (h) => (

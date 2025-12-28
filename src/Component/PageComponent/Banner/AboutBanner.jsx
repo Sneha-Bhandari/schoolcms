@@ -24,7 +24,7 @@ export default function AboutBanner({ initialData }) {
   const [editMode, setEditMode] = useState(false);
 
   return (
-    <div className=" ">
+    <div className="mx-12 ">
       <div className=" flex flex-col items-start justify-start mb-8">
         <h3 className="text-xl font-semibold underline mb-2">About Banner Section</h3>
         <p className="text-sm text-gray-500">

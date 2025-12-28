@@ -41,14 +41,13 @@ function TruncatedDescription({ htmlContent }) {
   );
 }
 
-export default function HeroSectionDetails() {
+export default function GalleryTopSection() {
   const editor = useRef(null);
 
   const [aboutItem, setAboutItem] = useState({
     id: 1,
-    title: "Education Needs ",
-    subtitle:"Complete Solution",
-    description: "<p>The beautiful thing about learning is that no one can take it away from you...</p>",
+    title: "Our Gallery",
+    description: "<p>Categories of Gallery....</p>",
   });
 
   const [showUpdateForm, setShowUpdateForm] = useState(false);
@@ -56,31 +55,30 @@ export default function HeroSectionDetails() {
   const handleUpdate = async (values, { resetForm }) => {
     const updated = {
       title: values.title,
-      subtitle: values.subtitle,
       description: values.description,
     };
 
     setAboutItem((prev) => ({ ...prev, ...updated }));
 
-    toast.success("Event Details Section updated locally!");
+    toast.success("Gallery Details Section updated locally!");
     setShowUpdateForm(false);
     resetForm();
   };
 
   return (
-    <div className="m-12">
+    <div className="my-12">
 
        
-        <div className="w-full flex flex-col items-start justify-start mb-8">
-          <h3 className="text-xl font-semibold underline mb-2">Hero Section Details</h3>
+        <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-8 mb-8">
+          <h3 className="text-xl font-semibold underline mb-2">Gallery Top Section</h3>
           <p className="text-sm text-gray-500">
-            Update the title and description for the hero section.
+            Update the title and description for the gallery top section.
           </p>
         </div>
 
        
-        <div className="">
-          <div className="w-full bg-gray-50 rounded-2xl shadow-2xl p-6 flex flex-col gap-6">
+       
+          <div className="md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl p-6 flex flex-col md:ml-15 gap-2">
             <Formik
               enableReinitialize
               initialValues={{
@@ -101,10 +99,6 @@ export default function HeroSectionDetails() {
                             <label className="text-sm font-medium text-gray-500">Title</label>
                             <p className="text-lg font-bold text-gray-800 mt-1">{aboutItem.title}</p>
                           </div>
-                          <div>
-                            <label className="text-sm font-medium text-gray-500">Sub Title</label>
-                            <p className="text-lg font-bold text-gray-800 mt-1">{aboutItem.subtitle}</p>
-                          </div>
 
                           <div>
                             <label className="text-sm font-medium text-gray-500">Description</label>
@@ -119,7 +113,7 @@ export default function HeroSectionDetails() {
                           onClick={() => setShowUpdateForm(true)}
                           className="bg-[#0B0C28] hover:bg-blue-700 transition-colors text-white text-sm font-semibold py-2.5 px-6 rounded-xl cursor-pointer duration-700"
                         >
-                          Update Hero Section Details
+                          Update Gallery Top Section Details
                         </button>
                       </div>
                     </>
@@ -136,16 +130,7 @@ export default function HeroSectionDetails() {
                         <ErrorMessage name="title" component="div" className="text-blue-500 text-sm mt-1" />
                       </div>
 
-                      <div className="flex flex-col gap-1">
-                        <label className="text-sm font-medium text-gray-700"> Sub Title *</label>
-                        <Field
-                          name="subtitle"
-                          type="text"
-                          placeholder="Enter sub title"
-                          className="border border-gray-300 px-4 py-2 rounded-md outline-0 focus:border-red-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                        />
-                        <ErrorMessage name="title" component="div" className="text-blue-500 text-sm mt-1" />
-                      </div>
+                     
 
                       <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-700">Description *</label>
@@ -182,7 +167,7 @@ export default function HeroSectionDetails() {
               )}
             </Formik>
           </div>
-        </div>
+      
       </div>
 
   );

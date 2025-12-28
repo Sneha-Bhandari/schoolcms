@@ -9,7 +9,7 @@ import ContactUsBanner from '../Component/PageComponent/Banner/ContactUsBanner'
 
 const Banner = () => {
   return (
-    <div className="md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl px-8 py-2 flex flex-col  gap-2 mb-12">
+    <div className="">
       <AboutBanner/>
       <EventBanner/>
       <BlogBanner/>

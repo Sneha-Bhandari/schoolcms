@@ -16,7 +16,7 @@ function ImageUpload() {
   const defaultImages = ["/Laptop.jpeg", "/bannerfour.png"];
 
   return (
-    <div className="my-12">
+    <div className="m-8">
       <div className="flex flex-col ml-8 mb-6">
       <h2 className="text-2xl underline font-semibold mb-2 "> Images Upload</h2>
       <p className="text-sm text-gray-500 ">

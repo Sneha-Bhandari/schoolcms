@@ -1,24 +1,41 @@
-import React, { useRef } from "react";
-import { Formik, Form, Field } from "formik";
-import * as yup from "yup";
+import React, { useRef, useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import JoditEditor from "jodit-react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
+const FacilitySchema = Yup.object().shape({
+  svg: Yup.string().required("SVG code is required"),
+  title: Yup.string().required("Title is required"),
+  description: Yup.string().required("Description is required"),
+});
 
 export default function AddFacilities({ initialValues, onSubmit, onCancel }) {
   const editor = useRef(null);
-
-  const validationSchema = yup.object({
-    svg: yup.string().required("SVG code is required"),
-    title: yup.string().required("Title is required"),
-    description: yup.string().required("Description is required"),
-  });
-
+  const [svgPreview, setSvgPreview] = useState(initialValues?.svg || "");
+  const navigate = useNavigate();
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-white w-full max-w-lg rounded-lg shadow-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto border-2 border-gray-500">
-        <h2 className="text-xl font-semibold text-center mb-4">
-          {initialValues ? "Edit Facility" : "Add New Facility"}
-        </h2>
+    <div className="w-full py-8 px-4">
+      <div className="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800">
+              {initialValues ? "Edit Facility" : "Add New Facility"}
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">
+              {initialValues
+                ? "Update facility details"
+                : "Create a new facility"}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/ourfacilities")}
+            className="bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold py-2.5 px-6 rounded-full"
+          >
+            Back
+          </button>
+        </div>
 
         <Formik
           enableReinitialize
@@ -29,7 +46,7 @@ export default function AddFacilities({ initialValues, onSubmit, onCancel }) {
               description: "",
             }
           }
-          validationSchema={validationSchema}
+          validationSchema={FacilitySchema}
           onSubmit={(values, { resetForm }) => {
             onSubmit(values);
             toast.success(
@@ -39,39 +56,52 @@ export default function AddFacilities({ initialValues, onSubmit, onCancel }) {
           }}
         >
           {({ values, setFieldValue, errors, touched }) => (
-            <Form className="space-y-4">
-
-              <div className="flex flex-col gap-2">
-                <label className="font-medium">SVG Code</label>
-                <Field
-                  as="textarea"
-                  name="svg"
-                  rows="5"
-                  placeholder="<svg>...</svg>"
-                  className="border px-3 py-2 rounded-md"
-                />
-                {errors.svg && touched.svg && (
-                  <span className="text-red-500 text-sm">{errors.svg}</span>
-                )}
-
-                {values.svg && (
-                  <div
-                    className="mt-2 border p-2 rounded-md"
-                    dangerouslySetInnerHTML={{ __html: values.svg }}
+            <Form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium">SVG Code *</label>
+                  <Field
+                    as="textarea"
+                    name="svg"
+                    rows="5"
+                    placeholder="<svg>...</svg>"
+                    className="border px-3 py-2 rounded-md resize-none"
+                    onChange={(e) => {
+                      setFieldValue("svg", e.target.value);
+                      setSvgPreview(e.target.value);
+                    }}
                   />
-                )}
+                  <ErrorMessage
+                    name="svg"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+
+                  {svgPreview && (
+                    <div
+                      className="mt-2 border w-24 h-24 p-2 rounded-md"
+                      dangerouslySetInnerHTML={{ __html: svgPreview }}
+                    />
+                  )}
+                </div>
+
+
+                <div className="flex flex-col">
+                  <label className="font-medium">Title *</label>
+                  <Field
+                    name="title"
+                    className="border px-3 py-2 rounded-md"
+                  />
+                  <ErrorMessage
+                    name="title"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
               </div>
 
               <div className="flex flex-col">
-                <label className="font-medium">Title</label>
-                <Field name="title" className="border px-3 py-2 rounded-md" />
-                {errors.title && touched.title && (
-                  <span className="text-red-500 text-sm">{errors.title}</span>
-                )}
-              </div>
-
-              <div className="flex flex-col">
-                <label className="font-medium">Description</label>
+                <label className="font-medium">Description *</label>
                 <Field name="description">
                   {({ field, form }) => (
                     <JoditEditor
@@ -83,30 +113,30 @@ export default function AddFacilities({ initialValues, onSubmit, onCancel }) {
                     />
                   )}
                 </Field>
-                {errors.description && touched.description && (
-                  <span className="text-red-500 text-sm">
-                    {errors.description}
-                  </span>
-                )}
+                <ErrorMessage
+                  name="description"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
 
-              <div className="flex justify-start gap-2 mt-4">
+              <div className="flex gap-3 pt-4">
                 <button
+                onClick={() => navigate("/ourfacilities")}
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md cursor-pointer"
+                  className="bg-[#0B0C28] hover:bg-blue-700 text-white px-8 py-3 rounded-xl cursor-pointer duration-500"
                 >
                   {initialValues ? "Update Facility" : "Add Facility"}
                 </button>
-
                 <button
                   type="button"
-                  onClick={onCancel}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-pointer"
+                  onClick={() => navigate("/ourfacilities")}
+                 
+                  className="bg-gray-500 hover:bg-gray-400 text-white px-6 py-3 rounded-xl cursor-pointer duration-500"
                 >
                   Cancel
                 </button>
               </div>
-
             </Form>
           )}
         </Formik>

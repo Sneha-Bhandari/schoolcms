@@ -6,12 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { MdCloudUpload, MdClose } from "react-icons/md";
 import JoditEditor from "jodit-react";
 
-const EventSchema = Yup.object().shape({
+const BlogSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
-  eventcategory: Yup.string().required("Category is required"),
-  eventdate: Yup.date().required("Date is required"),
-  eventauthor: Yup.string().required("Author is required"),
-  eventdescription: Yup.string().required("Description is required"),
+  blogcategory: Yup.string().required("Category is required"),
+  blogdate: Yup.date().required("Date is required"),
+  blogauthor: Yup.string().required("Author is required"),
+  blogvenue: Yup.string().required("Venue is required"),
+  blogdescription: Yup.string().required("Description is required"),
   image: Yup.mixed().required("Image is required"),
 });
 
@@ -38,27 +39,28 @@ export default function AddEvent() {
       return;
     }
 
-    const newEvent = {
+    const newBlog = {
       id: Date.now(),
       title: values.title,
-      eventcategory: values.eventcategory,
-      eventdate: values.eventdate,
-      eventauthor: values.eventauthor,
-      eventdescription: values.eventdescription,
-      eventimageid: imagePreview,
+      blogcategory: values.blogcategory,
+      blogdate: values.blogdate,
+      blogauthor: values.blogauthor,
+      blogvenue: values.blogvenue,
+      blogdescription: values.blogdescription,
+      blogimageid: imagePreview,
     };
 
     const existingEvents =
-      JSON.parse(localStorage.getItem("eventsData")) || [];
+      JSON.parse(localStorage.getItem("blogsData")) || [];
 
     localStorage.setItem(
       "eventsData",
       JSON.stringify([...existingEvents, newEvent])
     );
 
-    toast.success("Event added successfully!");
+    toast.success("Blog added successfully!");
     resetForm();
-    navigate("/events");
+    navigate("/blogs/bloglist");
   };
 
   return (
@@ -67,37 +69,39 @@ export default function AddEvent() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">
-              Add New Event
+              Add New Blog
             </h2>
             <p className="text-gray-600 text-sm mt-1">
-              Create a new event or update
+              Create a new blog or update
             </p>
           </div>
+
           <button
-            onClick={() => navigate("/events/eventlist")}
+            onClick={() => navigate("/blogs/bloglist")}
             className="bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold py-2.5 px-6 rounded-full"
           >
-            Back to Events
+            Back to Blogs
           </button>
         </div>
 
         <Formik
           initialValues={{
             title: "",
-            eventcategory: "",
-            eventdate: "",
-            eventauthor: "",
-            eventdescription: "",
+            blogcategory: "",
+            blogdate: "",
+            blogauthor: "",
+            blogvenue: "",
+            blogdescription: "",
             image: null,
           }}
-          validationSchema={EventSchema}
+          validationSchema={BlogSchema}
           onSubmit={handleSubmit}
         >
           {({ setFieldValue }) => (
             <Form className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Event Title *
+                  Blog Title *
                 </label>
                 <Field
                   name="title"
@@ -117,7 +121,7 @@ export default function AddEvent() {
                   </label>
                   <Field
                     as="select"
-                    name="eventcategory"
+                    name="blogcategory"
                     className="w-full border rounded-lg px-4 py-3"
                   >
                     <option value="">Select category</option>
@@ -126,7 +130,7 @@ export default function AddEvent() {
                     <option value="Past">Past</option>
                   </Field>
                   <ErrorMessage
-                    name="eventcategory"
+                    name="blogcategory"
                     component="div"
                     className="text-red-500 text-sm"
                   />
@@ -134,15 +138,15 @@ export default function AddEvent() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Event Date *
+                    Blog Date *
                   </label>
                   <Field
                     type="date"
-                    name="eventdate"
+                    name="blogdate"
                     className="w-full border rounded-lg px-4 py-3"
                   />
                   <ErrorMessage
-                    name="eventdate"
+                    name="blogdate"
                     component="div"
                     className="text-red-500 text-sm"
                   />
@@ -151,14 +155,29 @@ export default function AddEvent() {
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Author *
+                  Venue *
                 </label>
                 <Field
-                  name="eventauthor"
+                  name="blogvenue"
                   className="w-full border rounded-lg px-4 py-3"
                 />
                 <ErrorMessage
-                  name="eventauthor"
+                  name="blogvenue"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Author *
+                </label>
+                <Field
+                  name="blogauthor"
+                  className="w-full border rounded-lg px-4 py-3"
+                />
+                <ErrorMessage
+                  name="blogauthor"
                   component="div"
                   className="text-red-500 text-sm"
                 />
@@ -171,12 +190,12 @@ export default function AddEvent() {
 
                 <JoditEditor
                   onBlur={(content) =>
-                    setFieldValue("eventdescription", content)
+                    setFieldValue("blogdescription", content)
                   }
                 />
 
                 <ErrorMessage
-                  name="eventdescription"
+                  name="blogdescription"
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />
@@ -188,7 +207,7 @@ export default function AddEvent() {
                 </label>
 
                 {imagePreview ? (
-                  <div className="flex items-center gap-4">
+                  <div className="flex  gap-4">
                     <img
                       src={imagePreview}
                       alt="preview"
@@ -220,15 +239,15 @@ export default function AddEvent() {
 
               <div className="flex gap-3 pt-4">
                 <button
-                 onClick={() => navigate("/events/eventlist")}
-                 
+                  type="submit"
                   className="bg-[#0B0C28] hover:bg-blue-700 text-white px-8 py-3 rounded-xl transition"
                 >
-                  Create Event
+                  Create Blog
                 </button>
+
                 <button
                   type="button"
-                  onClick={() => navigate("/events/eventlist")}
+                  onClick={() => navigate("/blogs/bloglist")}
                   className="bg-gray-500 hover:bg-gray-400 text-white px-6 py-3 rounded-xl transition"
                 >
                   Cancel

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { MdAdd, MdMoreVert } from "react-icons/md";
+import { MdAdd, MdMoreVert, MdVisibility,MdDelete, MdEdit, } from "react-icons/md";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import Pagination from "../../Ui/Pagination";
 import ViewTeam from "./ViewTeam";
 import EditTeamForm from "./EditTeam";
+
 
 const mockTeamData = [
   {
@@ -204,29 +205,31 @@ useEffect(() => {
           className="w-32 bg-white border shadow-lg rounded-lg"
         >
           <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-blue-700 text-sm"
             onClick={() => {
               setOpenMenuId(null);
               navigate(`/team/view/${openMenuId}`);
             }}
           >
-            View
+             <MdVisibility size={16} /> View
           </button>
 
           <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-green-700 text-sm"
             onClick={() => {
               setOpenMenuId(null);
               navigate(`/team/edit/${openMenuId}`);
             }}
           >
-            Edit
+             <MdEdit size={16} /> Edit
           </button>
           <button
-            className="block w-full text-left px-3 py-2 text-red-500 hover:bg-gray-100"
-            onClick={() => handleDelete(openMenuId)}
-          >
-            Delete
+            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-red-700 text-sm"
+            onClick={() =>{ handleDelete(openMenuId)
+            setOpenMenuId(null);
+          
+             }} >
+            <MdDelete size={16} /> Delete
           </button>
         </div>
       )}

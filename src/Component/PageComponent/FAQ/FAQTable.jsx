@@ -10,27 +10,33 @@ const mockFaqData = [
   {
     id: 1,
     question: "What is the admission process?",
-    answer: "The admission process involves registration, tests, and interviews.",
+    answer:
+      "The admission process involves registration, tests, and interviews.",
+    category: "Admissions",
   },
   {
     id: 2,
     question: "What are the eligibility criteria?",
     answer: "Eligibility criteria vary depending on the program and grade.",
+    category: "Admissions",
   },
   {
     id: 3,
     question: "How to contact the administration?",
     answer: "You can contact the administration via email or phone.",
+    category: "Campus",
   },
   {
     id: 4,
     question: "Are there any scholarships available?",
     answer: "Yes, scholarships are offered based on merit and need.",
+    category: "Financial",
   },
   {
     id: 5,
     question: "What extracurricular activities are provided?",
     answer: "We offer sports, music, arts, and clubs for students.",
+    category: "Academics",
   },
 ];
 
@@ -46,11 +52,25 @@ export default function FaqTable() {
 
   const [viewId, setViewId] = useState(null);
   const [editId, setEditId] = useState(null);
+  const categories = [
+    "General",
+    "Admissions",
+    "Academics",
+    "Campus",
+    "Financial",
+  ];
 
+  const [selectedCategory, setSelectedCategory] = useState("General");
   const itemsPerPage = 3;
 
-  const totalPages = Math.ceil(faqData.length / itemsPerPage);
-  const paginatedFaqs = faqData.slice(
+  const filteredFaqs =
+    selectedCategory === "General"
+      ? faqData
+      : faqData.filter((f) => f.category === selectedCategory);
+
+  const totalPages = Math.ceil(filteredFaqs.length / itemsPerPage);
+
+  const paginatedFaqs = filteredFaqs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -121,12 +141,27 @@ export default function FaqTable() {
           Add FAQ
         </button>
       </div>
-
+      <div className="mb-4 flex justify-startw-fit ">
+        <select
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        >
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="overflow-x-auto border border-gray-200 rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {["#", "Question", "Answer", "Actions"].map((h) => (
+              {["#", "Category", "Question", "Answer", "Actions"].map((h) => (
                 <th
                   key={h}
                   className={`py-4 px-5 text-xs font-semibold uppercase text-gray-600 ${
@@ -145,6 +180,9 @@ export default function FaqTable() {
                 <td className="py-3 px-5">
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </td>
+                <td className="py-3 px-5  font-medium text-gray-700">
+                  {faq.category}
+                </td>
                 <td className="py-3 px-5 font-medium max-w-xs">
                   {truncateText(faq.question)}
                 </td>
@@ -156,7 +194,9 @@ export default function FaqTable() {
                     onClick={(e) => toggleDropdown(e, faq.id)}
                     className="dropdown-button h-8 w-8  "
                   >
-                    <h1 className="rounded-full bg-gray-100 p-2"><MdMoreVert /></h1>
+                    <h1 className="rounded-full bg-gray-100 p-2">
+                      <MdMoreVert />
+                    </h1>
                   </button>
                 </td>
               </tr>
@@ -191,8 +231,10 @@ export default function FaqTable() {
             <MdEdit /> Edit
           </button>
           <button
-            onClick={() => handleDelete(setOpen)}
-   
+            onClick={() => {
+              handleDelete(setOpen);
+              setOpen(null);
+            }}
             className="w-full px-4 py-2 text-left  flex items-center gap-2 text-red-600"
           >
             <MdDelete /> Delete
@@ -210,21 +252,20 @@ export default function FaqTable() {
         />
       )}
 
-     
-{selectedEditItem && (
-  <EditFaqForm
-    item={selectedEditItem}
-    onUpdate={(updated) =>
-      setFaqData((prev) =>
-        prev.map((f) => (f.id === updated.id ? updated : f))
-      )
-    }
-    onClose={() => {
-      setEditId(null);
-      navigate("/faq");
-    }}
-  />
-)}
+      {selectedEditItem && (
+        <EditFaqForm
+          item={selectedEditItem}
+          onUpdate={(updated) =>
+            setFaqData((prev) =>
+              prev.map((f) => (f.id === updated.id ? updated : f))
+            )
+          }
+          onClose={() => {
+            setEditId(null);
+            navigate("/faq");
+          }}
+        />
+      )}
     </div>
   );
 }

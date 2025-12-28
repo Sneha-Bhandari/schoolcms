@@ -11,10 +11,6 @@ const validationSchema = Yup.object({
     .required("Title is required")
     .min(2, "Title must be at least 2 characters")
     .max(100, "Title must not exceed 100 characters"),
-  subtitle: Yup.string()
-    .required("Subtitle is required")
-    .min(2, "Subtitle must at least 2 characters")
-    .max(200, "Subtitle must not exceed 200 characters"),
   description: Yup.string()
     .required("Description is required")
     .min(10, "Description must be at least 10 characters"),
@@ -66,7 +62,7 @@ export default function TeamTopSection() {
   };
 
   return (
-    <div className="md:my-6 my-12">
+    <div className="md:my-16 my-12">
 
        
         <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-4 mb-8">
@@ -83,7 +79,6 @@ export default function TeamTopSection() {
               enableReinitialize
               initialValues={{
                 title: aboutItem?.title || "",
-                subtitle: aboutItem?.subtitle || "",
                 description: aboutItem?.description || "",
               }}
               validationSchema={validationSchema}

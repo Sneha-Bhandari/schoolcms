@@ -8,8 +8,8 @@ import JoditEditor from "jodit-react";
 const schema = Yup.object().shape({
   question: Yup.string().required("Question is required"),
   answer: Yup.string().required("Answer is required"),
+  category: Yup.string().required("Category is required"),
 });
-
 export default function FaqAdd({ editItem, onSuccess, faqs, setFaqs }) {
   const editor = useRef(null);
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ export default function FaqAdd({ editItem, onSuccess, faqs, setFaqs }) {
         initialValues={{
           question: editItem ? editItem.question : "",
           answer: editItem ? editItem.answer : "",
+          category: editItem ? editItem.category : "General",
         }}
         validationSchema={schema}
         onSubmit={editItem ? handleUpdate : handleCreate}
@@ -60,7 +61,33 @@ export default function FaqAdd({ editItem, onSuccess, faqs, setFaqs }) {
         {({ setFieldValue, values, handleSubmit, resetForm }) => (
           <Form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Question *</label>
+              <label className="text-sm font-medium text-gray-700">
+                Category *
+              </label>
+
+              <Field
+                as="select"
+                name="category"
+                className="border border-gray-300 px-4 py-2 rounded-md outline-0 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+              >
+                <option value="General">General</option>
+                <option value="Admissions">Admissions</option>
+                <option value="Academics">Academics</option>
+                <option value="Campus">Campus</option>
+                <option value="Financial">Financial</option>
+              </Field>
+
+              <ErrorMessage
+                name="category"
+                component="div"
+                className="text-red-500 text-sm mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">
+                Question *
+              </label>
               <Field
                 name="question"
                 type="text"
@@ -75,7 +102,9 @@ export default function FaqAdd({ editItem, onSuccess, faqs, setFaqs }) {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Answer *</label>
+              <label className="text-sm font-medium text-gray-700">
+                Answer *
+              </label>
               <JoditEditor
                 ref={editor}
                 value={values.answer}

@@ -13,6 +13,7 @@ const isEmptyHtml = (value) => {
 
 const FaqSchema = Yup.object().shape({
   question: Yup.string().required("Question is required"),
+  category: Yup.string().required("Category is required"),
   answer: Yup.string()
     .test("not-empty", "Answer is required", (value) => !isEmptyHtml(value)),
 });
@@ -27,13 +28,14 @@ export default function EditFaqForm({ item, onUpdate, onClose }) {
       ...item,
       question: values.question,
       answer: values.answer,
+      category: values.category,
     };
-
+  
     onUpdate(updatedFaq);
     toast.success("FAQ updated successfully!");
     onClose();
   };
-
+  
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
@@ -53,12 +55,36 @@ export default function EditFaqForm({ item, onUpdate, onClose }) {
             initialValues={{
               question: item.question || "",
               answer: item.answer || "",
+              category: item.category || "General",
             }}
             validationSchema={FaqSchema}
             onSubmit={handleSubmit}
           >
             {({ values, setFieldValue, touched, errors }) => (
               <Form className="space-y-6">
+<div>
+  <label className="block text-sm font-semibold mb-1">
+    Category *
+  </label>
+
+  <Field
+    as="select"
+    name="category"
+    className="w-full border rounded-lg px-3 py-2"
+  >
+    <option value="General">General</option>
+    <option value="Admissions">Admissions</option>
+    <option value="Academics">Academics</option>
+    <option value="Campus">Campus</option>
+    <option value="Financial">Financial</option>
+  </Field>
+
+  <ErrorMessage
+    name="category"
+    component="div"
+    className="text-red-600 text-sm mt-1"
+  />
+</div>
 
                 <div>
                   <label className="block text-sm font-semibold mb-1">

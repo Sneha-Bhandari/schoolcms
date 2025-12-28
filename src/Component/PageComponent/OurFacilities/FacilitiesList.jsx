@@ -205,18 +205,18 @@ export default function FacilitiesList() {
         </p>
       </div>
 
-      <div className="w-full flex md:justify-end justify-start">
+      <div className="w-full flex md:justify-start justify-start">
         <button
       
-          onClick={() => setShowAddForm(true)}
-          className="bg-[#0B0C28] hover:bg-gray-700 text-white px-4 py-2 rounded-xl cursor-copy"
+          onClick={() => navigate("/addfacilities")}
+          className="bg-[#0B0C28] hover:bg-gray-700 text-white px-4 py-2 rounded-xl cursor-pointer"
         >
           Add More Facilities
         </button>
       </div>
 
       <div className=" md:w-full flex my-6 rounded-2xl shadow-2xl  mx-auto ">
-        <div className="grid md:grid-cols-2  grid-cols-1 gap-2 px-6 py-8">
+        <div className="grid md:grid-cols-2  grid-cols-1 gap-12 px-6 py-8">
           {facilities.map((item) => (
             <div
               key={item.id}

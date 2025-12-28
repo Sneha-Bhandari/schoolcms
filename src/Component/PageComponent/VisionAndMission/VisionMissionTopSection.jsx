@@ -37,13 +37,13 @@ function TruncatedDescription({ htmlContent }) {
   );
 }
 
-export default function VisionMissionTopSection() {
+export default function TeamTopSection() {
   const editor = useRef(null);
 
   const [aboutItem, setAboutItem] = useState({
     id: 1,
     title: "Vision And Mission",
-    description: "Guiding principles that shape our institution's purpose and direction Guiding principles that shape our institution's purpose and direction",
+    description: "<p>The beautiful thing about learning is that no one can take it away from you...</p>",
   });
 
   const [showUpdateForm, setShowUpdateForm] = useState(false);
@@ -56,26 +56,25 @@ export default function VisionMissionTopSection() {
 
     setAboutItem((prev) => ({ ...prev, ...updated }));
 
-    toast.success("Approved Section updated locally!");
+    toast.success("Event Details Section updated locally!");
     setShowUpdateForm(false);
     resetForm();
   };
 
   return (
-    <div  className="w-full md:ml-12 ml-0 pb-24">
-     
+    <div className="md:my-16 my-12">
+
        
-        <div className="w-full flex flex-col items-start justify-start mb-6 ">
-          <h3 className="text-xl font-semibold underline mb-2">Vision&Mission Top Section</h3>
+        <div className="md:w-fit  flex flex-col items-start justify-start  md:ml-16 ml-4 mb-8">
+          <h3 className="text-xl font-semibold underline mb-2">Vision And Mission Top Section</h3>
           <p className="text-sm text-gray-500">
-            Update the title and description for the vision and mission section.
+            Update the title and description for the Vision&Mission top section.
           </p>
         </div>
 
        
-       
-          <div className="md:w-11/13  w-full">
-          <div className="w-full bg-gray-50 rounded-2xl shadow-2xl p-6 flex flex-col gap-6">
+     
+          <div className="md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl p-6 flex flex-col md:ml-15 gap-2">
             <Formik
               enableReinitialize
               initialValues={{
@@ -109,7 +108,7 @@ export default function VisionMissionTopSection() {
                           onClick={() => setShowUpdateForm(true)}
                           className="bg-[#0B0C28] hover:bg-blue-700 transition-colors text-white text-sm font-semibold py-2.5 px-6 rounded-xl cursor-pointer duration-700"
                         >
-                          Update Vision&Mission Section
+                          Update Vision And Mission Top Section Details
                         </button>
                       </div>
                     </>
@@ -162,10 +161,10 @@ export default function VisionMissionTopSection() {
                 </Form>
               )}
             </Formik>
-        </div>
+
           </div>
-   
+
       </div>
-   
+
   );
 }

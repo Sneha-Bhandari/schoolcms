@@ -6,6 +6,8 @@ import Message from '../Component/PageComponent/Home/Message'
 import AboutSchool from '../Component/PageComponent/Home/AboutSchool'
 import FacilitiesTopSection from '../Component/PageComponent/OurFacilities/FacilitiesTopSection'
 import TestimonialTopSection from '../Component/PageComponent/Testimonial/TestimonialTopSection'
+import FaqTopSection from '../Component/PageComponent/FAQ/FaqTopSection'
+import GalleryTopSection from '../Component/PageComponent/Gallery/GalleryTopSection'
 
 
 
@@ -18,6 +20,8 @@ const Home = () => {
       <Academics/>
       <Message/>
       <TestimonialTopSection/>
+      <FaqTopSection/>
+      <GalleryTopSection/>
     </div>
   )
 }
