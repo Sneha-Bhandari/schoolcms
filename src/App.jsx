@@ -33,7 +33,10 @@ import Gallery from "./Pages/Gallery";
 import Contact from "./Pages/Contact";
 import AddBlog from "./Component/PageComponent/Blogs/AddBlog";
 import AddFacilities from "./Component/PageComponent/OurFacilities/AddFacilities";
-import Curriculum from "./Pages/Curriculum";
+
+import CurriculumDetails from "./Component/PageComponent/Curriculum/CurriculumDetails"
+import ViewCurriculum from "./Component/PageComponent/Curriculum/ViewCurriculum";
+import EditCurriculum from "./Component/PageComponent/Curriculum/EditCurriculum";
 
 function App() {
   return (
@@ -88,7 +91,11 @@ function App() {
         <Route path="/ourfacilities/:action/:id" element={<OurFacilities />}  />
 
         <Route path="/contact" element={<Contact/>}/>
-        <Route path="/curriculum" element={<Curriculum/>}/>
+        <Route path="/curriculum" element={<CurriculumDetails />} />
+<Route path="/curriculum/view/:id" element={<CurriculumDetails />} />
+<Route path="/curriculum/edit/:id" element={<CurriculumDetails />} />
+
+
       </Route>
     </Routes>
   );

@@ -19,7 +19,6 @@ export default function ViewEvent({ item, onClose }) {
         </h2>
 
         <div className="flex flex-col gap-6">
-          {/* Image */}
           <div className="flex justify-center">
             <img
               src={item.eventimageid || "/placeholder.jpg"}
@@ -28,7 +27,6 @@ export default function ViewEvent({ item, onClose }) {
             />
           </div>
 
-          {/* Details */}
           <div className="grid grid-cols-1 gap-4">
             <div>
               <h4 className="text-sm font-semibold text-gray-500 uppercase">

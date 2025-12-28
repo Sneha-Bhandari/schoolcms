@@ -6,14 +6,13 @@ import { BiFoodMenu } from "react-icons/bi";
 import {IoIosArrowDown } from "react-icons/io";
 import { MdOutlineDescription, MdDesktopWindows, MdMiscellaneousServices,MdEventNote } from "react-icons/md";
 import { TiInfoOutline } from "react-icons/ti";
-import { PiTelevision } from "react-icons/pi";
 import { FiUsers } from "react-icons/fi";
 import { BsCardHeading } from "react-icons/bs";
 import { LuContact } from "react-icons/lu";
 import { IoIosInformationCircle } from "react-icons/io";
 import { TfiGallery } from "react-icons/tfi";
 import { MdOutlineChromeReaderMode } from "react-icons/md";
-
+import { LiaImages } from "react-icons/lia";
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [eventDrop, setEventDrop] = useState(false);
@@ -23,16 +22,16 @@ const SideBar = () => {
   const navitems = [
     { title: "Home", path: "/", icons: <FaHome /> },
     { title: "About", path: "/about", icons: <MdOutlineDescription /> },
+    { title: "Hero Section", path: "/heroSection", icons: <MdDesktopWindows /> },
     { title: "Team", path: "/team", icons: <FiUsers /> },
     { title: "Banner", path: "/banner", icons: <BsCardHeading /> },
     { title: "Gallery", path: "/gallery", icons: <TfiGallery /> }
   ];
 
   const nextnav = [
-    { title: "Hero Section", path: "/heroSection", icons: <MdDesktopWindows /> },
     { title: "Details", path: "/details", icons: <TiInfoOutline /> },
     { title: "Our Facilities", path: "/ourfacilities", icons: <MdMiscellaneousServices /> },
-    { title: "VisionAndMission", path: "/visionAndmission", icons: <PiTelevision /> },
+    { title: "VisionAndMission", path: "/visionAndmission", icons: <LiaImages /> },
     { title: "Testimonial", path: "/testimonial", icons: <BiFoodMenu /> },
     { title: "FAQ", path: "/faq", icons: <MdDesktopWindows /> },
     { title: "Curriculum", path: "/curriculum", icons: <MdOutlineChromeReaderMode /> },
@@ -67,7 +66,7 @@ const SideBar = () => {
       </div>
 
       <div
-        className={`fixed top-18 left-0 h-[calc(100vh-4.5rem)] w-3/5 bg-gray-50 border-r-2 border-gray-300 transform transition-transform duration-300 z-40 overflow-y-auto ${
+        className={`fixed top-18 left-0 h-full w-3/5 bg-gray-50 border-r-2 border-gray-300 transform transition-transform duration-300 z-40 overflow-y-auto  ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:top-18 md:w-56 md:translate-x-0`}
       >
@@ -100,7 +99,7 @@ const SideBar = () => {
         <div className="mx-2">
           <button
             onClick={() => setEventDrop(!eventDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-6 py-2 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+            className="w-full flex justify-between items-center rounded-sm px-6 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
           >
             <div className="flex items-center gap-3">
               <MdEventNote />
@@ -130,7 +129,7 @@ const SideBar = () => {
         <div className="mx-2">
           <button
             onClick={() => setBlogDrop(!blogDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-6 py-2 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+            className="w-full flex justify-between items-center rounded-sm px-6 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
           >
             <div className="flex items-center gap-3">
               <IoIosInformationCircle />
@@ -146,7 +145,7 @@ const SideBar = () => {
                   <Link
                     to={blog.path}
                     onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-1.5  hover:bg-blue-100 w-full`}
+                    className={`flex items-center gap-3 px-3 py-2  hover:bg-blue-100 w-full`}
                   >
                     <FaDotCircle size={6} />
                     <span className="text-sm font-semibold">{blog.title}</span>
@@ -157,7 +156,7 @@ const SideBar = () => {
           )}
         </div>
 
-        <ul className="mx-2 mb-6">
+        <ul className="mx-2 mb-26 ">
           {nextnav.map((item, index) => (
             <li key={index} className="w-full">
               <Link

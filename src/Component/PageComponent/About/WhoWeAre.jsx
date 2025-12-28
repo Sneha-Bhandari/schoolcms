@@ -99,7 +99,7 @@ export default function WhoWeAre({ initialData }) {
 
           <button
             onClick={() => setEditMode(true)}
-            className="mt-6 bg-[#0B0C28] text-white px-6 py-2 rounded-xl cursor-pointer hover:bg-blue-700 duration-500"
+            className="mt-6 bg-[#0B0C28] text-white px-6 py-2 rounded-xl cursor-pointer hover:bg-blue-700 duration-500 w-fit"
           >
             Update Who We Are
           </button>

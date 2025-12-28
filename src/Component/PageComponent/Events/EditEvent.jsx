@@ -70,7 +70,6 @@ export default function EditEvent({ item, onClose, onUpdate }) {
           >
             {({ setFieldValue }) => (
               <Form className="space-y-6">
-                {/* Image */}
                 <div>
                   <label className="block text-sm font-semibold mb-2">
                     Event Image
@@ -97,7 +96,6 @@ export default function EditEvent({ item, onClose, onUpdate }) {
                   </div>
                 </div>
 
-                {/* Fields */}
                 {[
                   { name: "title", label: "Title" },
                   { name: "eventauthor", label: "Author" },
@@ -157,7 +155,6 @@ export default function EditEvent({ item, onClose, onUpdate }) {
                   />
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
