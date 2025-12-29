@@ -13,6 +13,8 @@ import { IoIosInformationCircle } from "react-icons/io";
 import { TfiGallery } from "react-icons/tfi";
 import { MdOutlineChromeReaderMode } from "react-icons/md";
 import { LiaImages } from "react-icons/lia";
+import { HiAcademicCap } from "react-icons/hi";
+
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [eventDrop, setEventDrop] = useState(false);
@@ -22,20 +24,22 @@ const SideBar = () => {
   const navitems = [
     { title: "Home", path: "/", icons: <FaHome /> },
     { title: "About", path: "/about", icons: <MdOutlineDescription /> },
-    { title: "Hero Section", path: "/heroSection", icons: <MdDesktopWindows /> },
-    { title: "Team", path: "/team", icons: <FiUsers /> },
     { title: "Banner", path: "/banner", icons: <BsCardHeading /> },
-    { title: "Gallery", path: "/gallery", icons: <TfiGallery /> }
+    { title: "Contact", path: "/contact", icons: <LuContact /> },
+
   ];
 
   const nextnav = [
+    { title: "Hero Section", path: "/heroSection", icons: <MdDesktopWindows /> },
     { title: "Details", path: "/details", icons: <TiInfoOutline /> },
+    { title: "Team", path: "/team", icons: <FiUsers /> },
     { title: "Our Facilities", path: "/ourfacilities", icons: <MdMiscellaneousServices /> },
+    { title: "Academic Programs", path: "/ouracademicprogram", icons: <HiAcademicCap /> },
     { title: "VisionAndMission", path: "/visionAndmission", icons: <LiaImages /> },
+    { title: "Gallery", path: "/gallery", icons: <TfiGallery /> },
     { title: "Testimonial", path: "/testimonial", icons: <BiFoodMenu /> },
     { title: "FAQ", path: "/faq", icons: <MdDesktopWindows /> },
     { title: "Curriculum", path: "/curriculum", icons: <MdOutlineChromeReaderMode /> },
-    { title: "Contact", path: "/contact", icons: <LuContact /> },
   ];
 
   const blogsDropdown = [
@@ -96,10 +100,10 @@ const SideBar = () => {
         </div>
 
       
-        <div className="mx-2">
+        <div className="mx-1">
           <button
             onClick={() => setEventDrop(!eventDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-6 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+            className="w-full flex justify-between items-center rounded-sm px-4 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
           >
             <div className="flex items-center gap-3">
               <MdEventNote />
@@ -126,10 +130,10 @@ const SideBar = () => {
           )}
         </div>
 
-        <div className="mx-2">
+        <div className="mx-1">
           <button
             onClick={() => setBlogDrop(!blogDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-6 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+            className="w-full flex justify-between items-center rounded-sm px-4 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
           >
             <div className="flex items-center gap-3">
               <IoIosInformationCircle />
@@ -162,7 +166,7 @@ const SideBar = () => {
               <Link
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-6 py-3 rounded-sm transition-all duration-500 hover:bg-[#0B0C28] hover:text-white ${isActive(item.path)}`}
+                className={`flex items-center gap-3 px-3 py-3 rounded-sm transition-all duration-500 hover:bg-[#0B0C28] hover:text-white ${isActive(item.path)}`}
               >
                 {item.icons}
                 <span className="text-md font-semibold">{item.title}</span>

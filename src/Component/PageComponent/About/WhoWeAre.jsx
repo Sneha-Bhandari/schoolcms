@@ -106,7 +106,7 @@ export default function WhoWeAre({ initialData }) {
         </div>
       ) : (
 
-        <div className="md:w-full mx-auto bg-gray-200 rounded-xl p-6">
+        <div className="md:w-11/13 mx-auto bg-gray-50 rounded-xl p-6">
           <Formik
             enableReinitialize
             initialValues={{

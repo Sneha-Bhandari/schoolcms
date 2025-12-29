@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ViewFacilities from "./ViewFacilities";
 import EditFacilities from "./EditFacilities";
 import AddFacilities from "./AddFacilities";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  MdMoreVert,
+  MdVisibility,
+  MdEdit,
+  MdDelete,
+  MdAdd,
+} from "react-icons/md";
+import Pagination from "../../Ui/Pagination";
 
 const defaultFacilities = [
-
   {
     id: 1,
     icon: (
@@ -148,42 +154,95 @@ const defaultFacilities = [
 
 export default function FacilitiesList() {
   const navigate = useNavigate();
+  const params = useParams();
+
   const [facilities, setFacilities] = useState(defaultFacilities);
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+
   const [viewId, setViewId] = useState(null);
   const [editId, setEditId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const selectedItem = facilities.find((i) => i.id === viewId);
-  const selectedEditItem = facilities.find((i) => i.id === editId);
+  const selectedViewItem = facilities.find((m) => m.id === viewId);
+  const selectedEditItem = facilities.find((m) => m.id === editId);
+
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(facilities.length / itemsPerPage);
+  const paginatedFacilities = facilities.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   useEffect(() => {
-    if (selectedItem || selectedEditItem || showAddForm) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
+    const { id } = params;
+    if (!id) return;
+    const numId = parseInt(id);
+    if (window.location.pathname.includes("/ourfacilities/view"))
+      setViewId(numId);
+    if (window.location.pathname.includes("/ourfacilities/edit"))
+      setEditId(numId);
+  }, [params]);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        open &&
+        !e.target.closest(".dropdown-button") &&
+        !e.target.closest(".dropdown-menu")
+      ) {
+        setOpen(false);
+        setSelectedId(null);
+      }
     };
-  }, [selectedItem, selectedEditItem, showAddForm]);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
+  const toggleDropdown = (e, id) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDropdownPos({
+      top: rect.bottom + window.scrollY + 5,
+      left: rect.left - 100,
+    });
+    setSelectedId(id);
+    setOpen(true);
+  };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this facility?")) {
-      setFacilities((prev) => prev.filter((item) => item.id !== id));
+      setFacilities((prev) => prev.filter((m) => m.id !== id));
+      setOpen(false);
+      setSelectedId(null);
     }
   };
 
   const handleUpdate = (updated) => {
     setFacilities((prev) =>
-      prev.map((item) => (item.id === editId ? { ...item, ...updated } : item))
+      prev.map((item) => {
+        if (item.id === editId) {
+          return {
+            ...item,
+            ...updated,
+            icon: updated.svg ? (
+              <span
+                dangerouslySetInnerHTML={{ __html: updated.svg }}
+                className="w-12 h-12 text-blue-600 inline-block"
+              />
+            ) : (
+              item.icon
+            ),
+          };
+        }
+        return item;
+      })
     );
     setEditId(null);
   };
 
   const normalizeSvg = (svg) => {
     if (!svg) return svg;
-
     return svg
       .replace(/width="[^"]*"/gi, "")
       .replace(/height="[^"]*"/gi, "")
@@ -195,124 +254,130 @@ export default function FacilitiesList() {
   };
 
   return (
-    <div className="w-11/12 mx-auto  flex flex-col md:ml-12 ml-0">
-      <div className="w-full flex flex-col items-start  gap-3 mb-4">
-        <h2 className="text-xl font-semibold underline">
-          Facilities List Section
-        </h2>
-        <p className="text-sm text-gray-400">
-          This Section includes SVG, Title and Description
-        </p>
-      </div>
-
-      <div className="w-full flex md:justify-start justify-start">
+    <div className="w-11/12 mx-auto py-12 relative ">
+      <div className="flex flex-col justify-start items-start mb-8 gap-2  ">
+        <h2 className="text-2xl font-bold text-gray-800">Facilities List</h2>
+        <p className="text-sm  text-gray-400 mb-5">This section includes icons,tile and descriptions</p>
         <button
-      
           onClick={() => navigate("/addfacilities")}
-          className="bg-[#0B0C28] hover:bg-gray-700 text-white px-4 py-2 rounded-xl cursor-pointer"
+          className="bg-[#0B0C28] hover:bg-blue-700 cursor-pointer transition-colors duration-500 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2"
         >
-          Add More Facilities
+          <MdAdd /> Add Facility
         </button>
       </div>
 
-      <div className=" md:w-full flex my-6 rounded-2xl shadow-2xl  mx-auto ">
-        <div className="grid md:grid-cols-2  grid-cols-1 gap-12 px-6 py-8">
-          {facilities.map((item) => (
-            <div
-              key={item.id}
-              className="relative group bg-white rounded-2xl border border-gray-200 
-                           p-6 w-full flex flex-col items-start 
-                           hover:shadow-xl transition-all duration-500"
-            >
-              <div className="w-14 h-14 mb-4 flex items-center justify-center">
-                {typeof item.icon === "string" ? (
-                  <div
-                    className="w-12 h-12"
-                    dangerouslySetInnerHTML={{ __html: item.icon }}
-                  />
-                ) : (
-                  item.icon
-                )}
-              </div>
-
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {item.title}
-              </h3>
-
-              <div
-                className="text-sm text-gray-600 leading-relaxed line-clamp-3"
-                dangerouslySetInnerHTML={{ __html: item.description }}
-              />
-
-              <div
-                className="absolute top-2 right-3 flex gap-1
-             opacity-100 md:opacity-0
-             translate-y-0 md:translate-y-3
-             md:group-hover:opacity-100 md:group-hover:translate-y-0
-             transition-all duration-300"
-              >
-                <button
-                  onClick={() => {
-                    navigate(`/ourfacilities/view/${item.id}`);
-                    setViewId(item.id);  
-                  }}
-                  className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-md cursor-pointer"
+      <div className="overflow-x-auto border border-gray-200 rounded-xl">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-300">
+            <tr>
+              {["Icon", "Title", "Description", "Actions"].map((header, i) => (
+                <th
+                  key={i}
+                  className={`py-3 px-5 text-center text-xs font-semibold uppercase text-gray-600 ${
+                    header === "Actions" ? "text-center" : ""
+                  }`}
                 >
-                  View
-                </button>
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-                <button
-                  onClick={() => {
-                    navigate(`/ourfacilities/edit/${item.id}`);
-                    setEditId(item.id);
-                  }}
-                  className="bg-[#0B0C28] text-white text-xs px-2 py-1 rounded-md cursor-pointer"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="bg-red-500 text-white text-xs px-2 py-1 rounded-md cursor-pointer"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+          <tbody className="bg-white divide-y divide-gray-100">
+            {paginatedFacilities.map((facility) => (
+              <tr key={facility.id} className="hover:bg-gray-50">
+                <td className="py-3 px-5">{facility.icon}</td>
+                <td className="py-3 px-5 font-semibold text-gray-800">
+                  {facility.title}
+                </td>
+                <td className="py-3 px-5 text-gray-600 max-w-xs  truncate">
+                  {facility.description}
+                </td>
+                <td className="py-3 px-3 text-center relative">
+                  <button
+                    onClick={(e) => toggleDropdown(e, facility.id)}
+                    className="dropdown-button inline-flex items-center justify-center h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-full"
+                  >
+                    <MdMoreVert size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {selectedItem && (
-       <ViewFacilities
-       item={selectedItem}
-       onClose={() => {
-         setViewId(null);
-         navigate("/ourfacilities");
-       }}
-     />
-     
+      {facilities.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       )}
 
+      {open && selectedId && (
+        <div
+          className="dropdown-menu fixed z-50 w-40 bg-white border rounded-lg shadow"
+          style={{ top: dropdownPos.top, left: dropdownPos.left }}
+        >
+          <button
+            onClick={() => {
+              setShowAddForm(false); 
+              setOpen(false); 
+              navigate(`/ourfacilities/view/${selectedId}`);
+            }}
+            className="w-full px-4 py-2 flex gap-2 text-blue-700 items-center"
+          >
+            <MdVisibility /> View
+          </button>
+          <button
+            onClick={() => {
+              setShowAddForm(false); 
+              setOpen(false);
+              navigate(`/ourfacilities/edit/${selectedId}`);
+            }}
+            className="w-full px-4 py-2 flex gap-2 text-green-700 items-center"
+          >
+            <MdEdit /> Edit
+          </button>
+          <button
+            onClick={() => {
+              setOpen(false);
+              handleDelete(selectedId);
+            }}
+            className="w-full px-4 py-2 flex gap-2 text-red-600 items-center"
+          >
+            <MdDelete /> Delete
+          </button>
+        </div>
+      )}
+
+      {selectedViewItem && (
+        <ViewFacilities
+          item={selectedViewItem}
+          onClose={() => setViewId(null)}
+        />
+      )}
       {selectedEditItem && (
         <EditFacilities
-        item={selectedEditItem}
-        onUpdate={handleUpdate}
-        onClose={() => {
-          setEditId(null);
-          navigate("/ourfacilities");
-        }}
-      />
+          item={selectedEditItem}
+          onUpdate={handleUpdate}
+          onClose={() => setEditId(null)}
+        />
       )}
       {showAddForm && (
         <AddFacilities
           onSubmit={(values) => {
+            if (!values.title.trim() || !values.description.trim()) {
+              alert("Title and Description are required");
+              return;
+            }
             const newFacility = {
               id: Date.now(),
               icon: normalizeSvg(values.svg),
               title: values.title,
               description: values.description,
             };
-
             setFacilities((prev) => [...prev, newFacility]);
             setShowAddForm(false);
           }}

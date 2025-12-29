@@ -42,7 +42,6 @@ export default function CurriculumDetails() {
     currentPage * itemsPerPage
   );
 
-  // Set view/edit modal based on URL
   useEffect(() => {
     if (!params.id) return;
     const id = parseInt(params.id);
@@ -51,7 +50,6 @@ export default function CurriculumDetails() {
     if (window.location.pathname.includes("/curriculum/edit")) setEditId(id);
   }, [params]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -79,8 +77,8 @@ export default function CurriculumDetails() {
 
   return (
     <div className="w-full py-8 relative">
-      <h2 className="text-2xl font-bold mb-6">Curriculum List</h2>
-
+      <h2 className="text-2xl font-bold ">Curriculum List</h2>
+    <p className="text-gray-500 text-sm mb-8">This section includes class name and its syllabus pdf</p>
       <div className="overflow-x-auto border border-gray-200 rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">

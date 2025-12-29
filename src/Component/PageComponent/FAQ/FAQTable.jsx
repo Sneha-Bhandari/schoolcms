@@ -136,7 +136,7 @@ export default function FaqTable() {
         <h2 className="text-2xl font-bold text-gray-800">FAQ Section</h2>
         <button
           onClick={() => navigate("/faq/add")}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg"
+          className="bg-[#0B0C28] hover:bg-blue-700 cursor-pointer transition-colors duration-500 text-white font-semibold py-2.5 px-6 rounded-lg"
         >
           Add FAQ
         </button>

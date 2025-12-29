@@ -122,7 +122,6 @@ export default function AddFacilities({ initialValues, onSubmit, onCancel }) {
 
               <div className="flex gap-3 pt-4">
                 <button
-                onClick={() => navigate("/ourfacilities")}
                   type="submit"
                   className="bg-[#0B0C28] hover:bg-blue-700 text-white px-8 py-3 rounded-xl cursor-pointer duration-500"
                 >
