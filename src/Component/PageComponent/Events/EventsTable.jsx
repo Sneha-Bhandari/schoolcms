@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function EventsTable() {
   const navigate = useNavigate();
   const params = useParams();
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [eventsData, setEventsData] = useState([
     {
       id: 1,
@@ -109,11 +110,10 @@ export default function EventsTable() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      setEventsData((prev) => prev.filter((m) => m.id !== id));
-      setOpen(false); 
-      setSelectedId(null);
-    }
+    setEventsData((prev) => prev.filter((m) => m.id !== id));
+    setOpen(false);
+    setSelectedId(null);
+    setConfirmDeleteId(null);
   };
 
   const getStatusColor = (category) => {
@@ -143,7 +143,7 @@ export default function EventsTable() {
           <h2 className="text-2xl font-bold text-gray-800">Events & Updates</h2>
           <button
             onClick={() => navigate("/addevent")}
-            className="bg-[#0B0C28] hover:bg-blue-700 cursor-pointer transition-colors duration-500 text-white font-semibold py-2.5 px-6 rounded-lg"
+            className="bg-linear-to-r from-[#0B0C28] to-cyan-400 cursor-pointer text-white font-semibold py-2.5 px-6 rounded-lg"
           >
             Add Event
           </button>
@@ -215,8 +215,11 @@ export default function EventsTable() {
 
                   <td className="py-3 px-3 text-center relative">
                     <button
-                      onClick={(e) => toggleDropdown(e, event.id)}
-                      className="dropdown-button inline-flex items-center justify-center h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-full"
+                      onClick={(e) => {
+                        toggleDropdown(e, event.id)
+                      
+                      }}
+                      className="dropdown-button inline-flex items-center justify-center h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-full cursor-pointer"
                     >
                       <MdMoreVert size={18} />
                     </button>
@@ -236,8 +239,9 @@ export default function EventsTable() {
         )}
 
         {open && (
+
           <div
-            className="dropdown-menu fixed z-50 w-40 bg-white border rounded-lg shadow"
+            className="dropdown-menu fixed z-50 w-40 bg-linear-to-r from-[#d2d2db] to-white border rounded-lg shadow"
             style={{ top: dropdownPos.top, left: dropdownPos.left }}
           >
             <button
@@ -256,8 +260,7 @@ export default function EventsTable() {
 
             <button
               onClick={() => {
-                handleDelete(selectedId);
-                setOpen(null);
+                setConfirmDeleteId(selectedId);
               }}
               className="w-full px-4 py-2 flex gap-2 text-red-600 items-center"
             >
@@ -291,6 +294,33 @@ export default function EventsTable() {
           }}
         />
       )}
+
+{confirmDeleteId && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/20">
+    <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        Are you sure you want to delete?
+      </h3>
+
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={() => handleDelete(confirmDeleteId)}
+          className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold cursor-pointer"
+        >
+          Yes
+        </button>
+
+        <button
+          onClick={() => setConfirmDeleteId(null)}
+          className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold cursor-p"
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

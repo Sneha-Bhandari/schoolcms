@@ -45,7 +45,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto">
 
-        {/* Header with Cross Button */}
         <div className="flex items-center justify-between border-b px-6 py-4">
           <h2 className="text-xl font-semibold">Edit Academic Program</h2>
 
@@ -73,7 +72,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
             {({ values, setFieldValue }) => (
               <Form className="space-y-6">
 
-                {/* Title */}
                 <div>
                   <label className="font-medium">Program Title *</label>
                   <Field
@@ -87,7 +85,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
                   />
                 </div>
 
-                {/* Duration */}
                 <div>
                   <label className="font-medium">Duration *</label>
                   <Field
@@ -101,7 +98,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
                   />
                 </div>
 
-                {/* Description — Jodit */}
                 <div>
                   <label className="font-medium">Description *</label>
 
@@ -125,7 +121,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
                   />
                 </div>
 
-                {/* Key Features */}
                 <div>
                   <label className="font-medium">Key Features *</label>
 
@@ -166,7 +161,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
                   />
                 </div>
 
-                {/* Image Upload */}
                 <div>
                   <label className="font-medium">Program Image</label>
 
@@ -205,7 +199,6 @@ export default function EditAcademicProgram({ item, onClose, onUpdate }) {
                   )}
                 </div>
 
-                {/* Actions */}
                 <div className="flex justify-start gap-3 pt-4 border-t">
                 <button
                     type="submit"

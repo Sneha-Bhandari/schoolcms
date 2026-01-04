@@ -1,187 +1,102 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
 
-const validationSchema = Yup.object({
-  address: Yup.string()
-    .required("Address is required")
-    .min(5, "Address must be at least 5 characters"),
-
-  phones: Yup.string()
-    .required("At least one contact number is required")
-    .test("phones", "Enter valid phone numbers separated by commas", (val) =>
-      val
-        ?.split(",")
-        .map((p) => p.trim())
-        .every((p) => p.length >= 6)
-    ),
-
+const schema = Yup.object().shape({
+  address: Yup.string().required("Address is required"),
+  phone: Yup.string()
+    .matches(/^[0-9+\-\s()]*$/, "Invalid phone number")
+    .required("Contact number is required"),
   email: Yup.string()
-    .required("Email is required")
-    .email("Enter a valid email address"),
+    .email("Invalid email format")
+    .required("Email is required"),
 });
 
-export default function ContactInfoSection() {
-  const [contactInfo, setContactInfo] = useState({
-    address: "Sukkhanagar Butwal-8, Rupandehi, Nepal",
-    phones: "071562537, 9857034838, 9857043464, 9846970252",
-    email: "info@globalschool.edu.np",
-  });
-
-  const [showUpdateForm, setShowUpdateForm] = useState(false);
-
-  const handleUpdate = async (values, { resetForm }) => {
-    setContactInfo(values);
-    toast.success("Contact information updated!");
-    setShowUpdateForm(false);
-    resetForm();
-  };
+const ContactInformation = () => {
+  const [storedData, setStoredData] = useState(null);
+  const hasData = !!storedData;
 
   return (
-    <div className="w-full py-10">
-      <div className="flex flex-col items-center gap-10">
-        <div className="w-11/12 flex flex-col items-start justify-start ">
-          <h3 className="text-xl font-semibold underline mb-2">
-            Contact Information
-          </h3>
-          <p className="text-sm text-gray-500">
-            Update the school’s address, phone numbers, and email.
-          </p>
-        </div>
+    <div className="bg-white md:my-12 md:flex md:flex-row flex-col w-full mx-auto md:gap-4">
+      <div className="md:w-1/3 w-full mt-4 flex flex-col justify-center items-center md:items-start md:justify-start mx-auto">
+        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28] underline underline-offset-2">
+          Contact Information
+        </h3>
+        <p className="text-xs text-gray-400">
+          Address, Contact Number, and Email
+        </p>
+      </div>
 
-        <div className="w-11/12">
-          <div className="w-full bg-gray-50 rounded-2xl shadow-2xl p-6 flex flex-col gap-6">
-            <Formik
-              enableReinitialize
-              initialValues={contactInfo}
-              validationSchema={validationSchema}
-              onSubmit={handleUpdate}
-            >
-              {({ handleSubmit, resetForm }) => (
-                <Form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-                  {!showUpdateForm ? (
-                    <>
-                      <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                        <div className="space-y-4">
-                          <div>
-                            <label className="text-md font-medium text-gray-500">
-                              Address
-                            </label>
-                            <p className="text-lg font-bold text-gray-800 mt-1">
-                              {contactInfo.address}
-                            </p>
-                          </div>
+      <div className="md:w-10/15 w-full">
+        <Formik
+          enableReinitialize
+          initialValues={{
+            address: hasData ? storedData.address : "",
+            phone: hasData ? storedData.phone : "",
+            email: hasData ? storedData.email : "",
+          }}
+          validationSchema={schema}
+          onSubmit={(values) => {
+            setStoredData(values);
+            alert(hasData ? "Updated successfully!" : "Saved successfully!");
+            console.log("Contact Info:", values);
+          }}
+        >
+          {() => (
+            <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
+              <div>
+                <label className="text-md font-medium">Address *</label>
+                <Field
+                  name="address"
+                  as="textarea"
+                  className="border px-4 py-2 rounded-md w-full resize-none"
+                  rows={3}
+                />
+                <ErrorMessage
+                  name="address"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
 
-                          <div>
-                            <label className="text-smd font-medium text-gray-500">
-                              Contact Numbers
-                            </label>
-                            <p className="text-gray-700 mt-1">
-                              {contactInfo.phones}
-                            </p>
-                          </div>
+              <div>
+                <label className="text-md font-medium">Contact Number *</label>
+                <Field
+                  name="phone"
+                  className="border px-4 py-2 rounded-md w-full"
+                />
+                <ErrorMessage
+                  name="phone"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
 
-                          <div>
-                            <label className="text-md font-medium text-gray-500">
-                              Email
-                            </label>
-                            <p className="text-gray-700 mt-1">
-                              {contactInfo.email}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+              <div>
+                <label className="text-md font-medium">Email *</label>
+                <Field
+                  name="email"
+                  className="border px-4 py-2 rounded-md w-full"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
 
-                      <button
-                        type="button"
-                        onClick={() => setShowUpdateForm(true)}
-                        className="bg-[#0B0C28] hover:bg-blue-700 transition-colors text-white text-sm font-semibold py-2.5 px-6 rounded-xl cursor-pointer duration-700 w-fit"
-                      >
-                        Update Contact Information
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-md font-medium text-gray-700">
-                          Address *
-                        </label>
-                        <Field
-                          name="address"
-                          type="text"
-                          placeholder="Enter address"
-                          className="border border-gray-300 px-4 py-2 rounded-md outline-0 focus:border-red-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                        />
-                        <ErrorMessage
-                          name="address"
-                          component="div"
-                          className="text-red-500 text-sm mt-1"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-md font-medium text-gray-700">
-                          Contact Numbers (comma separated) *
-                        </label>
-                        <Field
-                          name="phones"
-                          as="textarea"
-                          rows="2"
-                          placeholder="071..., 98..."
-                          className="border border-gray-300 px-4 py-2 rounded-md outline-0 focus:border-red-500 focus:ring-1 resize-none focus:ring-blue-500 transition-colors"
-                        />
-                        <ErrorMessage
-                          name="phones"
-                          component="div"
-                          className="text-red-500 text-sm mt-1"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-md font-medium text-gray-700">
-                          Email *
-                        </label>
-                        <Field
-                          name="email"
-                          type="email"
-                          placeholder="Enter email"
-                          className="border border-gray-700 px-4 py-2 rounded-md outline-0 focus:border-red-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                        />
-                        <ErrorMessage
-                          name="email"
-                          component="div"
-                          className="text-red-500 text-sm mt-1"
-                        />
-                      </div>
-
-                      <div className="flex gap-3 pt-2">
-                        <button
-                          type="submit"
-                          className="bg-[#0B0C28] hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-10 rounded-xl duration-500 cursor-pointer"
-                        >
-                          Save Changes
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowUpdateForm(false);
-                            resetForm();
-                          }}
-                          className="bg-gray-400 hover:bg-gray-500 text-white text-sm font-semibold py-2.5 px-6 rounded-xl duration-500 cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </Form>
-              )}
-            </Formik>
-          </div>
-        </div>
+              <button
+                type="submit"
+                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 font-semibold text-white py-2.5 px-4 w-fit rounded-xl cursor-pointer"
+              >
+                {hasData ? "Update Contact Info" : "Create Contact Info"}
+              </button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );
-}
+};
+
+export default ContactInformation;

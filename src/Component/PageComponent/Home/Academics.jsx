@@ -1,207 +1,167 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as yup from "yup";
+import * as Yup from "yup";
+import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
-import { MdOutlineBrowserUpdated } from "react-icons/md";
-import defaultImage1 from '../../../assets/Photo/logos.png';
-import defaultImage2 from '../../../assets/Photo/logos.png';
 
-const schema = yup.object().shape({
-  image1: yup.mixed().required("First image is required"),
-  image2: yup.mixed().required("Second image is required"),
-  title: yup.string().required("Title is required"),
-  description: yup.string().required("Description is required"),
+const schema = Yup.object().shape({
+  title: Yup.string().required("Title is required"),
+  description: Yup.string().required("Description is required"),
+  image1id: Yup.number().required("Image 1 is required"),
+  image1Url: Yup.string().required("Image 1 preview required"),
+  image2id: Yup.number().required("Image 2 is required"),
+  image2Url: Yup.string().required("Image 2 preview required"),
 });
 
-const defaultData = {
-  image1: defaultImage1,
-  image2: defaultImage2,
-  title: "Academics Section",
-  description:
-    "Our academic programs are designed to foster innovation, critical thinking, and practical skills, ensuring that students are prepared for real-world challenges.",
-};
+const Academics = () => {
+  const [storedData, setStoredData] = useState(null);
 
-export default function Academics({ initialData }) {
-  const editor = useRef(null);
-  const [data, setData] = useState(initialData || defaultData);
-  const [editMode, setEditMode] = useState(false);
+  const hasData = Boolean(storedData);
+
+  const fileUpload = (file, setFieldValue, fieldId, fieldUrl) => {
+    const fakeId = Date.now();
+    const fakeUrl = URL.createObjectURL(file);
+    setFieldValue(fieldId, fakeId);
+    setFieldValue(fieldUrl, fakeUrl);
+  };
 
   return (
-    <div className="md:my-6 my-12 ">
-      <div className="md:w-fit flex flex-col items-start justify-start md:ml-16 ml-8 mb-8">
-        <h3 className="text-xl font-semibold underline mb-2">Academics Section</h3>
-        <p className="text-sm text-gray-500">
-          Update the title, description, and two images for this section.
+    <div className="bg-white md:my-12 md:flex md:flex-row flex-col flex w-full mx-auto md:gap-4">
+      <div className="md:w-1/4 w-full mt-4 flex flex-col justify-center items-center md:items-start md:justify-start mx-auto">
+        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28] underline-offset-2">
+          Academic Section
+        </h3>
+        <p className="text-xs text-gray-400">
+          Title, Description, Image 1, and Image 2
         </p>
       </div>
-      
-      {!editMode ? (
-        <div className="md:w-11/12 w-full mx-auto  rounded-xl shadow-2xl p-6 flex flex-col md:ml-15 gap-2">
-          <h1 className="text-md font-semibold text-gray-500">
-            Title: <span className="text-sm text-black">{data.title}</span>
-          </h1>
 
-          <div className="flex flex-col md:flex-row gap-6 mt-2">
-            <div className="flex flex-col items-start gap-2">
-              <h1 className="text-md font-semibold text-gray-500">Image 1:</h1>
-              {data.image1 && (
-                <img
-                  src={data.image1 instanceof File ? URL.createObjectURL(data.image1) : data.image1.src || data.image1}
-                  alt="Image 1"
-                  className="h-40 w-40 object-cover rounded-md border"
+      <div className="md:w-10/15 w-full">
+        <Formik
+          enableReinitialize
+          initialValues={{
+            title: storedData?.title || "",
+            description: storedData?.description || "",
+            image1id: storedData?.image1id || "",
+            image1Url: storedData?.image1Url || "",
+            image2id: storedData?.image2id || "",
+            image2Url: storedData?.image2Url || "",
+          }}
+          validationSchema={schema}
+          onSubmit={(values) => {
+            setStoredData(values);
+            alert(hasData ? "Updated successfully!" : "Saved successfully!");
+            console.log("Academic Section Data:", values);
+          }}
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
+              <div>
+                <label className="text-md font-medium">Title *</label>
+                <Field
+                  name="title"
+                  className="border-2 border-blue-900 px-4 py-2 rounded-md w-full"
                 />
-              )}
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h1 className="text-md font-semibold text-gray-500">Image 2:</h1>
-              {data.image2 && (
-                <img
-                  src={data.image2 instanceof File ? URL.createObjectURL(data.image2) : data.image2.src || data.image2}
-                  alt="Image 2"
-                  className="h-40 w-40 object-cover rounded-md border"
+                <ErrorMessage
+                  name="title"
+                  component="div"
+                  className="text-red-500 text-sm"
                 />
-              )}
-            </div>
-          </div>
+              </div>
 
-          <div className="mt-4">
-            <h1 className="text-md font-semibold mb-2 text-gray-500">Description:</h1>
-            <div className="text-sm" dangerouslySetInnerHTML={{ __html: data.description }} />
-          </div>
+              <div>
+                <label className="text-md font-medium">Description *</label>
+                <JoditEditor
+                  value={values.description}
+                  onBlur={(content) => setFieldValue("description", content)}
+                  onChange={() => {}}
+                />
+                <ErrorMessage
+                  name="description"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
 
-          <button
-            onClick={() => setEditMode(true)}
-            className="bg-[#0B0C28] text-white px-6 py-2 rounded-xl hover:bg-blue-800 transition-colors mt-4 w-fit duration-500 cursor-pointer"
-          >
-            Update Academics
-          </button>
-        </div>
-      ) : (
-        /* EDIT MODE */
-        <div className="md:w-4/5 w-full flex flex-col items-center justify-center mx-auto rounded-xl p-6 bg-gray-200 gap-4">
-          <Formik
-            enableReinitialize
-            initialValues={{
-              image1: data.image1,
-              image2: data.image2,
-              title: data.title,
-              description: data.description,
-            }}
-            validationSchema={schema}
-            onSubmit={(values) => {
-              setData(values);
-              setEditMode(false);
-            }}
-          >
-            {({ values, setFieldValue }) => (
-              <Form className="flex flex-col w-full gap-4">
-                
-                {/* IMAGE 1 */}
-                <div className="flex flex-col gap-2">
-                  <label className="font-medium text-gray-500">Image 1 *</label>
-                  <label htmlFor="image1" className="w-fit cursor-pointer">
-                    {values.image1 instanceof File ? (
-                      <img
-                        src={URL.createObjectURL(values.image1)}
-                        className="h-32 w-40 object-cover rounded-md border"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center bg-white h-32 w-40 rounded-md border-2 border-[#8486b6] hover:bg-[#0B0C28] duration-700 transition-colors">
-                        <MdOutlineBrowserUpdated className="text-3xl text-gray-500 " />
-                      </div>
-                    )}
-                  </label>
-                  <input
-                    id="image1"
-                    name="image1"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) setFieldValue("image1", file);
-                    }}
-                  />
-                  <ErrorMessage name="image1" component="div" className="text-red-500 text-sm" />
-                </div>
-
-                {/* IMAGE 2 */}
-                <div className="flex flex-col gap-2">
-                  <label className="font-medium text-gray-500">Image 2 *</label>
-                  <label htmlFor="image2" className="w-fit cursor-pointer">
-                    {values.image2 instanceof File ? (
-                      <img
-                        src={URL.createObjectURL(values.image2)}
-                        className="h-32 w-40 object-cover rounded-md border"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center bg-white h-32 w-40 rounded-md border-2 border-[#8486b6] hover:bg-[#0B0C28] duration-700 transition-colors">
-                        <MdOutlineBrowserUpdated className="text-3xl text-gray-500 " />
-                      </div>
-                    )}
-                  </label>
-                  <input
-                    id="image2"
-                    name="image2"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) setFieldValue("image2", file);
-                    }}
-                  />
-                  <ErrorMessage name="image2" component="div" className="text-red-500 text-sm" />
-                </div>
-
-                {/* TITLE */}
-                <div className="flex flex-col gap-2">
-                  <label className="font-medium text-gray-500">Title *</label>
-                  <Field
-                    name="title"
-                    type="text"
-                    placeholder="Title"
-                    className="border border-gray-300 px-4 py-2 rounded-lg w-full"
-                  />
-                  <ErrorMessage name="title" component="div" className="text-red-500 text-sm" />
-                </div>
-
-                {/* DESCRIPTION */}
-                <div className="flex flex-col gap-2">
-                  <label className="font-medium text-gray-500">Description *</label>
-                  <div className="border border-gray-300 rounded-lg overflow-hidden">
-                    <JoditEditor
-                      ref={editor}
-                      value={values.description}
-                      onBlur={(content) => setFieldValue("description", content)}
+<div className="flex  w-full gap-6">
+<div className="flex flex-col gap-2 w-1/2">
+                <label className="text-md font-medium">Image 1 *</label>
+                <label
+                  htmlFor="academic-image1"
+                  className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
+                >
+                  {values.image1Url ? (
+                    <img
+                      src={values.image1Url}
+                      className="h-full object-cover w-full"
+                      alt="preview"
                     />
-                  </div>
-                  <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
-                </div>
+                  ) : (
+                    <FcEditImage className="text-gray-300 text-5xl" />
+                  )}
+                </label>
+                <input
+                  id="academic-image1"
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) =>
+                    fileUpload(e.target.files[0], setFieldValue, "image1id", "image1Url")
+                  }
+                />
+                <ErrorMessage
+                  name="image1id"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
 
-                {/* ACTION BUTTONS */}
-                <div className="flex gap-4 mt-4">
-                  <button
-                    type="submit"
-                    className="bg-[#0B0C28] text-white px-6 py-2 rounded-xl hover:bg-blue-900 transition-colors cursor-pointer duration-500"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditMode(false)}
-                    className="bg-gray-400 text-white px-6 py-2 rounded-xl hover:bg-gray-500 transition-colors cursor-pointer duration-500"
-                  >
-                    Cancel
-                  </button>
-                </div>
+              <div className="flex flex-col gap-2 w-1/2">
+                <label className="text-md font-medium">Image 2 *</label>
+                <label
+                  htmlFor="academic-image2"
+                  className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
+                >
+                  {values.image2Url ? (
+                    <img
+                      src={values.image2Url}
+                      className="h-full object-cover w-full"
+                      alt="preview"
+                    />
+                  ) : (
+                    <FcEditImage className="text-gray-300 text-5xl" />
+                  )}
+                </label>
+                <input
+                  id="academic-image2"
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) =>
+                    fileUpload(e.target.files[0], setFieldValue, "image2id", "image2Url")
+                  }
+                />
+                <ErrorMessage
+                  name="image2id"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+</div>
+             
 
-              </Form>
-            )}
-          </Formik>
-        </div>
-      )}
+              <button
+                type="submit"
+                className="bg-[#0B0C28] font-semibold bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-4 w-fit rounded-xl"
+              >
+                {hasData ? "Update Academic Section" : "Create Academic Section"}
+              </button>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </div>
   );
-}
+};
+
+export default Academics;

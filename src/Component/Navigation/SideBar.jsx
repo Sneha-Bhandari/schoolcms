@@ -54,7 +54,7 @@ const SideBar = () => {
 
   const isActive = (path) =>
     location.pathname === path
-      ? "bg-[#0B0C28] text-white font-semibold"
+      ? "bg-linear-to-r from-[#0B0C10] to-cyan-200 text-white font-semibold"
       : "text-gray-700";
 
   return (
@@ -81,7 +81,7 @@ const SideBar = () => {
 
         <ul className="mx-2">
           {navitems.map((item, index) => (
-            <li key={index} className="w-full">
+            <li key={index} className="w-full ">
               <Link
                 to={item.path}
                 onClick={() => setIsOpen(false)}
@@ -102,10 +102,14 @@ const SideBar = () => {
       
         <div className="mx-1">
           <button
-            onClick={() => setEventDrop(!eventDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-4 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+          // to={item.path}
+            onClick={() =>{
+              
+              setEventDrop(!eventDrop)}
+            } 
+            className="w-full flex justify-between items-center rounded-sm px-4 py-2.5 text-gray-700 hover:bg-linear-to-r from-[#0B0C10] to-cyan-200 hover:text-white  ${isActive(item.path)}"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 ">
               <MdEventNote />
               <span className="text-md font-medium">Events</span>
             </div>
@@ -113,7 +117,7 @@ const SideBar = () => {
           </button>
 
           {eventDrop && (
-            <ul className="text-black w-42 ml-5 my-4 max-h-60 overflow-y-auto">
+            <ul className="text-black w-42 ml-5 my-4 max-h-60 overflow-y-auto ">
               {eventsDropdown.map((event, idx) => (
                 <li key={idx} className="">
                   <Link
@@ -132,8 +136,9 @@ const SideBar = () => {
 
         <div className="mx-1">
           <button
+          // to={item.path}
             onClick={() => setBlogDrop(!blogDrop)}
-            className="w-full flex justify-between items-center rounded-sm px-4 py-2.5 text-gray-700 hover:bg-[#0B0C28] hover:text-white"
+            className="w-full flex justify-between items-center rounded-sm px-4 py-2.5 text-gray-700 hover:bg-linear-to-r from-[#0B0C10] to-cyan-200 hover:text-white  "
           >
             <div className="flex items-center gap-3">
               <IoIosInformationCircle />
@@ -166,7 +171,7 @@ const SideBar = () => {
               <Link
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-3 py-3 rounded-sm transition-all duration-500 hover:bg-[#0B0C28] hover:text-white ${isActive(item.path)}`}
+                className={`flex items-center gap-3 px-3 py-3 rounded-sm transition-all duration-500   ${isActive(item.path)}`}
               >
                 {item.icons}
                 <span className="text-md font-semibold">{item.title}</span>

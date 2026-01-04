@@ -32,12 +32,11 @@ export default function AddEvent() {
     setImagePreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = (values, { resetForm }) => {
-    if (!imagePreview) {
-      toast.error("Please upload an image");
-      return;
-    }
-
+    const handleSubmit = (values, { resetForm }) => {
+      if (!imagePreview) {
+        toast.error("Please upload an image");
+        return;
+      }
     const newEvent = {
       id: Date.now(),
       title: values.title,
@@ -48,17 +47,11 @@ export default function AddEvent() {
       eventimageid: imagePreview,
     };
 
-    const existingEvents =
-      JSON.parse(localStorage.getItem("eventsData")) || [];
-
-    localStorage.setItem(
-      "eventsData",
-      JSON.stringify([...existingEvents, newEvent])
-    );
+    
 
     toast.success("Event added successfully!");
     resetForm();
-    navigate("/events");
+    navigate("/events/eventlist");
   };
 
   return (
@@ -220,7 +213,7 @@ export default function AddEvent() {
 
               <div className="flex gap-3 pt-4">
                 <button
-                 onClick={() => navigate("/events/eventlist")}
+                 type="submit"
                  
                   className="bg-[#0B0C28] hover:bg-blue-700 text-white px-8 py-3 rounded-xl transition"
                 >

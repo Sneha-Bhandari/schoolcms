@@ -9,7 +9,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         className={`px-4 py-2 rounded-lg text-white font-medium transition ${
           currentPage === 1
             ? "bg-gray-300 cursor-not-allowed"
-            : "bg-[#0B0C28] hover:bg-blue-700"
+            : "bg-linear-to-r from-[#0B0C28] to-cyan-400"
         }`}
       >
         &laquo; Prev
@@ -24,7 +24,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         className={`px-4 py-2 rounded-lg text-white font-medium transition ${
           currentPage === totalPages
             ? "bg-gray-300 cursor-not-allowed"
-            : "bg-[#0B0C28] hover:bg-blue-700"
+            : "bg-linear-to-r from-[#0B0C28] to-cyan-400"
         }`}
       >
         Next &raquo;

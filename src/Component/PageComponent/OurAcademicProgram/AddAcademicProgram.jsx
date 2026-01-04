@@ -85,21 +85,18 @@ export default function AddAcademicProgram() {
           {({ setFieldValue, values }) => (
             <Form className="space-y-6">
 
-              {/* Title */}
               <div>
                 <label>Program Title *</label>
                 <Field className="w-full border rounded px-3 py-2" name="title" />
                 <ErrorMessage name="title" className="text-red-500 text-sm" component="div" />
               </div>
 
-              {/* Duration */}
               <div>
                 <label>Duration *</label>
                 <Field className="w-full border rounded px-3 py-2" name="academicduration" />
                 <ErrorMessage name="academicduration" className="text-red-500 text-sm" component="div" />
               </div>
 
-              {/* Description with Jodit */}
               <div>
                 <label>Description *</label>
 
@@ -125,7 +122,6 @@ export default function AddAcademicProgram() {
                 />
               </div>
 
-              {/* Key Features */}
               <div>
                 <label>Key Features *</label>
 
@@ -163,7 +159,6 @@ export default function AddAcademicProgram() {
                 <ErrorMessage name="keyfeatures" className="text-red-500 text-sm" component="div" />
               </div>
 
-              {/* Image */}
               <div>
                 <label>Program Image *</label>
 
@@ -201,7 +196,6 @@ export default function AddAcademicProgram() {
                 <ErrorMessage name="image" className="text-red-500 text-sm" component="div" />
               </div>
 
-              {/* Buttons */}
               <div className="flex gap-4">
                 <button
                   type="submit"
