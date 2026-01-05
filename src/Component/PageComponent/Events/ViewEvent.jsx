@@ -21,7 +21,7 @@ export default function ViewEvent({ item, onClose }) {
         <div className="flex flex-col gap-6">
           <div className="flex justify-center">
             <img
-              src={item.eventimageid || "/placeholder.jpg"}
+              src={item.imageUrl || "/placeholder.jpg"}
               alt={item.title}
               className="w-full max-w-sm object-cover rounded-lg shadow-md"
             />

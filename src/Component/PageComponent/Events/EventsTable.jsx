@@ -17,7 +17,8 @@ export default function EventsTable() {
       eventdate: "2025-01-05",
       eventauthor: "School Activities Team",
       eventdescription: "A major tech event with speakers from all over Nepal.",
-      eventimageid: "/aca2.jpg",
+      imageUrl: "/aca2.jpg",
+      imageid: 111,
     },
     {
       id: 2,
@@ -26,34 +27,38 @@ export default function EventsTable() {
       eventdate: "2025-02-12",
       eventauthor: "School Activities Team",
       eventdescription: "Learn full-stack development in 2 weeks.",
-      eventimageid: "/aca2.jpg",
+      imageUrl: "/aca2.jpg",
+      imageid: 222,
     },
     {
       id: 3,
-      title: "Design Workshop",
-      eventcategory: "Current",
-      eventdate: "2024-12-10",
+      title: "How Our Students Learn Beyond the Classroom",
+      eventcategory: "Upcoming",
+      eventdate: "2025-02-12",
       eventauthor: "School Activities Team",
-      eventdescription: "A creative workshop focusing on UI/UX.",
-      eventimageid: "/aca2.jpg",
+      eventdescription: "Learn full-stack development in 2 weeks.",
+      imageUrl: "/aca2.jpg",
+      imageid: 333,
     },
     {
       id: 4,
-      title: "Design Workshop",
-      eventcategory: "Past",
-      eventdate: "2024-12-10",
+      title: "How Our Students Learn Beyond the Classroom",
+      eventcategory: "Upcoming",
+      eventdate: "2025-02-12",
       eventauthor: "School Activities Team",
-      eventdescription: "A creative workshop focusing on UI/UX.",
-      eventimageid: "/aca2.jpg",
+      eventdescription: "Learn full-stack development in 2 weeks.",
+      imageUrl: "/aca2.jpg",
+      imageid: 444,
     },
     {
       id: 5,
-      title: "Design Workshop",
+      title: "How Our Students Learn Beyond the Classroom",
       eventcategory: "Upcoming",
-      eventdate: "2024-12-10",
+      eventdate: "2025-02-12",
       eventauthor: "School Activities Team",
-      eventdescription: "A creative workshop focusing on UI/UX.",
-      eventimageid: "/aca2.jpg",
+      eventdescription: "Learn full-stack development in 2 weeks.",
+      imageUrl: "/aca2.jpg",
+      imageid: 555,
     },
   ]);
 
@@ -137,138 +142,139 @@ export default function EventsTable() {
   };
 
   return (
-    <div className="w-full py-8 relative">
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Events & Updates</h2>
+    <div className="w-11/12 mx-auto py-8 relative">
+      <div className="flex  flex-col md:justify-start md:items-start gap-2 justify-center items-center mb-6">
+        <h2 className="text-2xl font-semibold underline underline-offset-2 text-gray-800">
+          Events & Updates
+        </h2>
+        <p className="text-gray-500 text-xs">
+          This section includes image, title, category, date, author and
+          description
+        </p>
+      </div>
+      <button
+        onClick={() => navigate("/addevent")}
+        className="bg-linear-to-r from-[#0B0C28] to-cyan-400 mb-5 cursor-pointer text-white font-semibold py-2.5 px-6 rounded-lg "
+      >
+        Add Event
+      </button>
+      <div className="overflow-x-auto border border-gray-200 rounded-xl">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              {[
+                "Image",
+                "Title",
+                "Category",
+                "Date",
+                "Author",
+                "Description",
+                "Actions",
+              ].map((header, i) => (
+                <th
+                  key={i}
+                  className={`py-4 px-5 text-center text-xs font-semibold uppercase text-gray-600 ${
+                    header === "Actions" ? "text-center" : ""
+                  }`}
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody className="bg-white divide-y divide-gray-500">
+            {paginatedEvents.map((event) => (
+              <tr key={event.id} className="hover:bg-gray-50 text-start">
+                <td className="py-3 px-5">
+                  <img
+                    src={event.imageUrl}
+                    alt={event.title}
+                    className="w-14 h-14 object-cover rounded-lg border"
+                  />
+                </td>
+
+                <td className="py-3 px-2 text-sm text-gray-800 truncate max-w-52 ">
+                  {event.title}
+                </td>
+
+                <td className="py-3 px-5">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                      event.eventcategory
+                    )}`}
+                  >
+                    {event.eventcategory}
+                  </span>
+                </td>
+
+                <td className="py-3 px-5 text-gray-600">
+                  {new Date(event.eventdate).toLocaleDateString()}
+                </td>
+
+                <td className="py-3 px-5 text-gray-700  text-sm ">
+                  {event.eventauthor}
+                </td>
+
+                <td className="py-3 px-5 text-gray-600 max-w-xs">
+                  <div className="line-clamp-2">
+                    {truncateDescription(event.eventdescription)}
+                  </div>
+                </td>
+
+                <td className="py-3 px-3 text-center relative">
+                  <button
+                    onClick={(e) => {
+                      toggleDropdown(e, event.id);
+                    }}
+                    className="dropdown-button inline-flex items-center justify-center h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-full cursor-pointer"
+                  >
+                    <MdMoreVert size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {eventsData.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
+      {open && (
+        <div
+          className="dropdown-menu fixed z-50 w-40 bg-linear-to-r from-[#d2d2db] to-white border rounded-lg shadow"
+          style={{ top: dropdownPos.top, left: dropdownPos.left }}
+        >
           <button
-            onClick={() => navigate("/addevent")}
-            className="bg-linear-to-r from-[#0B0C28] to-cyan-400 cursor-pointer text-white font-semibold py-2.5 px-6 rounded-lg"
+            onClick={() => navigate(`/events/eventlist/view/${selectedId}`)}
+            className="w-full px-4 py-2 flex gap-2 text-blue-700 items-center cursor-pointer"
           >
-            Add Event
+            <MdVisibility /> View
+          </button>
+
+          <button
+            onClick={() => navigate(`/events/eventlist/edit/${selectedId}`)}
+            className="w-full px-4 py-2 flex gap-2 text-green-700 items-center cursor-pointer"
+          >
+            <MdEdit /> Edit
+          </button>
+
+          <button
+            onClick={() => {
+              setConfirmDeleteId(selectedId);
+            }}
+            className="w-full px-4 py-2 flex gap-2 text-red-600 items-center cursor-pointer"
+          >
+            <MdDelete /> Delete
           </button>
         </div>
-
-        <div className="overflow-x-auto border border-gray-200 rounded-xl">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                {[
-                  "Image",
-                  "Title",
-                  "Category",
-                  "Date",
-                  "Author",
-                  "Description",
-                  "Actions",
-                ].map((header, i) => (
-                  <th
-                    key={i}
-                    className={`py-4 px-5 text-center text-xs font-semibold uppercase text-gray-600 ${
-                      header === "Actions" ? "text-center" : ""
-                    }`}
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody className="bg-white divide-y divide-gray-100">
-              {paginatedEvents.map((event) => (
-                <tr key={event.id} className="hover:bg-gray-50 text-start">
-                  <td className="py-3 px-5">
-                    <img
-                      src={event.eventimageid}
-                      alt={event.title}
-                      className="w-14 h-14 object-cover rounded-lg border"
-                    />
-                  </td>
-
-                  <td className="py-3 px-2 text-sm text-gray-800 truncate max-w-52 ">
-                    {event.title}
-                  </td>
-
-                  <td className="py-3 px-5">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                        event.eventcategory
-                      )}`}
-                    >
-                      {event.eventcategory}
-                    </span>
-                  </td>
-
-                  <td className="py-3 px-5 text-gray-600">
-                    {new Date(event.eventdate).toLocaleDateString()}
-                  </td>
-
-                  <td className="py-3 px-5 text-gray-700  text-sm ">
-                    {event.eventauthor}
-                  </td>
-
-                  <td className="py-3 px-5 text-gray-600 max-w-xs">
-                    <div className="line-clamp-2">
-                      {truncateDescription(event.eventdescription)}
-                    </div>
-                  </td>
-
-                  <td className="py-3 px-3 text-center relative">
-                    <button
-                      onClick={(e) => {
-                        toggleDropdown(e, event.id)
-                      
-                      }}
-                      className="dropdown-button inline-flex items-center justify-center h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-full cursor-pointer"
-                    >
-                      <MdMoreVert size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {eventsData.length > itemsPerPage && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        )}
-
-        {open && (
-
-          <div
-            className="dropdown-menu fixed z-50 w-40 bg-linear-to-r from-[#d2d2db] to-white border rounded-lg shadow"
-            style={{ top: dropdownPos.top, left: dropdownPos.left }}
-          >
-            <button
-              onClick={() => navigate(`/events/eventlist/view/${selectedId}`)}
-              className="w-full px-4 py-2 flex gap-2 text-blue-700 items-center"
-            >
-              <MdVisibility /> View
-            </button>
-
-            <button
-              onClick={() => navigate(`/events/eventlist/edit/${selectedId}`)}
-              className="w-full px-4 py-2 flex gap-2 text-green-700 items-center"
-            >
-              <MdEdit /> Edit
-            </button>
-
-            <button
-              onClick={() => {
-                setConfirmDeleteId(selectedId);
-              }}
-              className="w-full px-4 py-2 flex gap-2 text-red-600 items-center"
-            >
-              <MdDelete /> Delete
-            </button>
-          </div>
-        )}
-      </div>
+      )}
 
       {selectedViewItem && (
         <ViewEvent
@@ -295,32 +301,31 @@ export default function EventsTable() {
         />
       )}
 
-{confirmDeleteId && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/20">
-    <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
-        Are you sure you want to delete?
-      </h3>
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/20">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Are you sure you want to delete?
+            </h3>
 
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={() => handleDelete(confirmDeleteId)}
-          className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold cursor-pointer"
-        >
-          Yes
-        </button>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => handleDelete(confirmDeleteId)}
+                className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold cursor-pointer"
+              >
+                Yes
+              </button>
 
-        <button
-          onClick={() => setConfirmDeleteId(null)}
-          className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold cursor-p"
-        >
-          No
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold cursor-p"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

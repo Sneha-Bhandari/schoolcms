@@ -8,73 +8,79 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function BlogsTable() {
   const navigate = useNavigate();
   const params = useParams();
-
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [blogsData, setBlogsData] = useState([
     {
       id: 1,
       title: "Annual Sports Meet 2025",
-      category: "Sports",
-      date: "2025-10-15",
-      supervisor: "Mr. Rajesh Shrestha",
-      venue: "School Playground",
-      description:
+      blogcategory: "Sports",
+      blogdate: "2025-10-15",
+      blogsupervisor: "Mr. Rajesh Shrestha",
+      blogvenue: "School Playground",
+      blogdescription:
         "Students showcased their athletic skills in a spirited competition Lorem hfgqyejafxzy uweyrgfzyejxf jqywefhns",
-      image: "/aca2.jpg",
+      blogimageid: "/aca2.jpg",
+      
     },
     {
       id: 2,
-      title: "Science Exhibition Highlights",
-      category: "Technology",
-      date: "2025-08-05",
-      supervisor: "Mrs. Sita Gurung",
-      venue: "Main Hall",
-      description:
-        "Students presented innovative science models that impressed visitors...",
-      image: "/aca2.jpg",
+      title: "Annual Sports Meet 2025",
+      blogcategory: "Sports",
+      blogdate: "2025-10-15",
+      blogsupervisor: "Mr. Rajesh Shrestha",
+      blogvenue: "School Playground",
+      blogdescription:
+        "Students showcased their athletic skills in a spirited competition Lorem hfgqyejafxzy uweyrgfzyejxf jqywefhns",
+      blogimageid: "/aca2.jpg",
+      
     },
     {
       id: 3,
-      title: "Science Exhibition Highlights",
-      category: "Field Visit",
-      date: "2025-08-05",
-      supervisor: "Mrs. Sita Gurung",
-      venue: "Main Hall",
-      description:
-        "Students presented innovative science models that impressed visitors...",
-      image: "/aca2.jpg",
+      title: "Annual Sports Meet 2025",
+      blogcategory: "Sports",
+      blogdate: "2025-10-15",
+      blogsupervisor: "Mr. Rajesh Shrestha",
+      blogvenue: "School Playground",
+      blogdescription:
+        "Students showcased their athletic skills in a spirited competition Lorem hfgqyejafxzy uweyrgfzyejxf jqywefhns",
+        blogimageid: "/aca2.jpg",
+      
     },
     {
       id: 4,
-      title: "Science Exhibition Highlights",
-      category: "Arts",
-      date: "2025-08-05",
-      supervisor: "Mrs. Sita Gurung",
-      venue: "Main Hall",
-      description:
-        "Students presented innovative science models that impressed visitors...",
-      image: "/aca2.jpg",
+      title: "Annual Sports Meet 2025",
+      blogcategory: "Sports",
+      blogdate: "2025-10-15",
+      blogsupervisor: "Mr. Rajesh Shrestha",
+      blogvenue: "School Playground",
+      blogdescription:
+        "Students showcased their athletic skills in a spirited competition Lorem hfgqyejafxzy uweyrgfzyejxf jqywefhns",
+        blogimageid: "/aca2.jpg",
+      
     },
     {
       id: 5,
-      title: "Science Exhibition Highlights",
-      category: "Exhibition",
-      date: "2025-08-05",
-      supervisor: "Mrs. Sita Gurung",
-      venue: "Main Hall",
-      description:
-        "Students presented innovative science models that impressed visitors...",
-      image: "/aca2.jpg",
+      title: "Annual Sports Meet 2025",
+      blogcategory: "Sports",
+      blogdate: "2025-10-15",
+      blogsupervisor: "Mr. Rajesh Shrestha",
+      blogvenue: "School Playground",
+      blogdescription:
+        "Students showcased their athletic skills in a spirited competition Lorem hfgqyejafxzy uweyrgfzyejxf jqywefhns",
+        blogimageid: "/aca2.jpg",
+      
     },
     {
       id: 6,
-      title: "Science Exhibition Highlights",
-      category: "Cultural",
-      date: "2025-08-05",
-      supervisor: "Mrs. Sita Gurung",
-      venue: "Main Hall",
-      description:
-        "Students presented innovative science models that impressed visitors...",
-      image: "/aca2.jpg",
+      title: "Annual Sports Meet 2025",
+      blogcategory: "Sports",
+      blogdate: "2025-10-15",
+      blogsupervisor: "Mr. Rajesh Shrestha",
+      blogvenue: "School Playground",
+      blogdescription:
+        "Students showcased their athletic skills in a spirited competition Lorem hfgqyejafxzy uweyrgfzyejxf jqywefhns",
+        blogimageid: "/aca2.jpg",
+      
     },
   ]);
 
@@ -131,15 +137,14 @@ export default function BlogsTable() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this blog?")) {
-      setBlogsData((prev) => prev.filter((m) => m.id !== id));
-      setOpen(false);
-      setSelectedId(null);
-    }
+    setBlogsData((prev) => prev.filter((m) => m.id !== id));
+    setOpen(false);
+    setSelectedId(null);
+    setConfirmDeleteId(null);
   };
 
-  const getStatusColor = (category) => {
-    switch (category?.toLowerCase()) {
+  const getStatusColor = (blogcategory) => {
+    switch (blogcategory?.toLowerCase()) {
       case "sports":
         return "bg-blue-100 text-blue-700";
       case "technology":
@@ -161,16 +166,20 @@ export default function BlogsTable() {
 
   return (
     <div className="w-full py-8 relative">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Blogs & Stories</h2>
-
+      <div className="flex  flex-col md:justify-start md:items-start gap-2 justify-center items-center mb-6">
+        <h2 className="text-2xl font-semibold underline underline-offset-2 text-gray-800">
+          Blogs & Updates
+        </h2>
+        <p className="text-gray-500 text-xs">
+          This section includes image, title, category, date, supervisor, venue, description
+        </p>
+      </div>
         <button
           onClick={() => navigate("/addblog")}
-          className="bg-[#0B0C28] hover:bg-blue-700 cursor-pointer transition-colors duration-500 text-white font-semibold py-2.5 px-6 rounded-lg"
+          className="bg-linear-to-r from-[#0B0C28] to-cyan-400 mb-5 cursor-pointer text-white font-semibold py-2.5 px-6 rounded-lg"
         >
           Add Blog
         </button>
-      </div>
 
       <div className="overflow-x-auto border border-gray-200 rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
@@ -201,7 +210,7 @@ export default function BlogsTable() {
               <tr key={blog.id} className="hover:bg-gray-50 text-center">
                 <td className="py-3 px-5">
                   <img
-                    src={blog.image}
+                    src={blog.blogimageid}
                     alt={blog.title}
                     className="w-14 h-14 object-cover rounded-lg border"
                   />
@@ -214,28 +223,28 @@ export default function BlogsTable() {
                 <td className="py-3 px-5">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                        blog.category
+                        blog.blogcategory
                       )}`}
                     >
-                      {blog.category}
+                      {blog.blogcategory}
                     </span>
                   </td>
 
                 <td className="py-3 px-3 text-gray-600">
-                  {new Date(blog.date).toLocaleDateString()}
+                  {new Date(blog.blogdate).toLocaleDateString()}
                 </td>
 
                 <td className="py-3 px-3 text-gray-700">
-                  {blog.supervisor}
+                  {blog.blogsupervisor}
                 </td>
 
                 <td className="py-3 px-3 text-gray-700">
-                  {blog.venue}
+                  {blog.blogvenue}
                 </td>
 
                 <td className="py-3 px-3 text-gray-600 max-w-xs">
                   <div className="line-clamp-2">
-                    {truncate(blog.description)}
+                    {truncate(blog.blogdescription)}
                   </div>
                 </td>
 
@@ -282,8 +291,7 @@ export default function BlogsTable() {
 
           <button
             onClick={() => {
-              handleDelete(selectedId);
-            setOpen(null);
+              setConfirmDeleteId(selectedId);
             }}
             className="w-full px-4 py-2 flex gap-2 text-red-600 items-center"
           >
@@ -315,6 +323,32 @@ export default function BlogsTable() {
             navigate("/blogs/bloglist");
           }}
         />
+      )}
+
+{confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/20">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Are you sure you want to delete?
+            </h3>
+
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => handleDelete(confirmDeleteId)}
+                className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold cursor-pointer"
+              >
+                Yes
+              </button>
+
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold cursor-p"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

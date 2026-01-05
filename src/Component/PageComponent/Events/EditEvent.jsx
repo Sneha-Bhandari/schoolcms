@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import { BsImages } from "react-icons/bs";
+import JoditEditor from "jodit-react";
 
 const EventSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -11,19 +12,24 @@ const EventSchema = Yup.object().shape({
   eventdate: Yup.date().required("Date is required"),
   eventauthor: Yup.string().required("Author is required"),
   eventdescription: Yup.string().required("Description is required"),
+  imageid: Yup.number().required("Image is required"),
 });
 
 export default function EditEvent({ item, onClose, onUpdate }) {
-  const [imagePreview, setImagePreview] = useState(item?.eventimageid);
+  const [imagePreview, setImagePreview] = useState(item?.imageUrl);
 
   if (!item) return null;
 
   const handleImageChange = (e, setFieldValue) => {
     const file = e.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-      setFieldValue("image", file);
-    }
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    const id = Date.now();
+
+    setImagePreview(url);
+    setFieldValue("imageUrl", url);
+    setFieldValue("imageid", id);
   };
 
   const handleSubmit = (values) => {
@@ -34,8 +40,12 @@ export default function EditEvent({ item, onClose, onUpdate }) {
       eventdate: values.eventdate,
       eventauthor: values.eventauthor,
       eventdescription: values.eventdescription,
-      eventimageid: imagePreview,
+
+      imageUrl: values.imageUrl,
+      imageid: values.imageid,
     };
+
+    console.log("UPDATED EVENT:", updatedEvent);
 
     onUpdate(updatedEvent);
     toast.success("Event updated successfully!");
@@ -63,17 +73,20 @@ export default function EditEvent({ item, onClose, onUpdate }) {
               eventdate: item.eventdate || "",
               eventauthor: item.eventauthor || "",
               eventdescription: item.eventdescription || "",
-              image: null,
+              imageUrl: item.imageUrl || "",
+              imageid: item.imageid || "",
             }}
             validationSchema={EventSchema}
             onSubmit={handleSubmit}
           >
-            {({ setFieldValue }) => (
+            {({ values, setFieldValue }) => (
               <Form className="space-y-6">
+
                 <div>
                   <label className="block text-sm font-semibold mb-2">
-                    Event Image
+                    Event Image *
                   </label>
+
                   <div className="border-2 border-dashed rounded-lg p-4 text-center">
                     {imagePreview && (
                       <img
@@ -82,39 +95,55 @@ export default function EditEvent({ item, onClose, onUpdate }) {
                         className="w-40 h-40 mx-auto rounded-lg object-cover mb-3"
                       />
                     )}
+
                     <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex items-center gap-2">
                       <BsImages /> Change Image
                       <input
                         type="file"
                         hidden
                         accept="image/*"
-                        onChange={(e) =>
-                          handleImageChange(e, setFieldValue)
-                        }
+                        onChange={(e) => handleImageChange(e, setFieldValue)}
                       />
                     </label>
+
+                    <ErrorMessage
+                      name="imageid"
+                      component="div"
+                      className="text-red-600 text-sm mt-2"
+                    />
                   </div>
                 </div>
 
-                {[
-                  { name: "title", label: "Title" },
-                  { name: "eventauthor", label: "Author" },
-                ].map((f) => (
-                  <div key={f.name}>
-                    <label className="block text-sm font-semibold mb-1">
-                      {f.label} *
-                    </label>
-                    <Field
-                      name={f.name}
-                      className="w-full border rounded-lg px-3 py-2"
-                    />
-                    <ErrorMessage
-                      name={f.name}
-                      component="div"
-                      className="text-red-600 text-sm"
-                    />
-                  </div>
-                ))}
+         
+                <div>
+                  <label className="block text-sm font-semibold mb-1">
+                    Title *
+                  </label>
+                  <Field
+                    name="title"
+                    className="w-full border rounded-lg px-3 py-2"
+                  />
+                   <ErrorMessage
+                  name="title"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-1">
+                    Author *
+                  </label>
+                  <Field
+                    name="eventauthor"
+                    className="w-full border rounded-lg px-3 py-2"
+                  />
+                   <ErrorMessage
+                  name="eventauthor"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                </div>
 
                 <div>
                   <label className="block text-sm font-semibold mb-1">
@@ -130,6 +159,11 @@ export default function EditEvent({ item, onClose, onUpdate }) {
                     <option value="Current">Current</option>
                     <option value="Past">Past</option>
                   </Field>
+                  <ErrorMessage
+                  name="eventcategory"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
                 </div>
 
                 <div>
@@ -141,35 +175,48 @@ export default function EditEvent({ item, onClose, onUpdate }) {
                     name="eventdate"
                     className="w-full border rounded-lg px-3 py-2"
                   />
+                   <ErrorMessage
+                  name="eventdate"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold mb-1">
                     Description *
                   </label>
-                  <Field
-                    as="textarea"
-                    rows={4}
+
+                  <JoditEditor
+                    value={values.eventdescription}
+                    onBlur={(content) =>
+                      setFieldValue("eventdescription", content)
+                    }
+                  />
+
+                  <ErrorMessage
                     name="eventdescription"
-                    className="w-full border rounded-lg px-3 py-2"
+                    component="div"
+                    className="text-red-600 text-sm"
                   />
                 </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg"
+                    className="bg-linear-to-r from-[#0B0C28] to-cyan-400 cursor-pointer text-white px-4 py-2.5 rounded-lg"
                   >
                     Update Event
                   </button>
                   <button
                     type="button"
                     onClick={onClose}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 rounded-lg"
+                    className="bg-gray-500 hover:bg-gray-600 cursor-pointer text-white px-4 py-2.5 rounded-lg"
                   >
                     Cancel
                   </button>
                 </div>
+
               </Form>
             )}
           </Formik>

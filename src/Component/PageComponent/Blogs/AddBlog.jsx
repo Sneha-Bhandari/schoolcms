@@ -10,7 +10,7 @@ const BlogSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   blogcategory: Yup.string().required("Category is required"),
   blogdate: Yup.date().required("Date is required"),
-  blogauthor: Yup.string().required("Author is required"),
+  blogsupervisor: Yup.string().required("Supervisor is required"),
   blogvenue: Yup.string().required("Venue is required"),
   blogdescription: Yup.string().required("Description is required"),
   image: Yup.mixed().required("Image is required"),
@@ -40,24 +40,15 @@ export default function AddEvent() {
     }
 
     const newBlog = {
-      id: Date.now(),
       title: values.title,
       blogcategory: values.blogcategory,
       blogdate: values.blogdate,
-      blogauthor: values.blogauthor,
+      blogsupervisor: values.blogsupervisor,
       blogvenue: values.blogvenue,
       blogdescription: values.blogdescription,
       blogimageid: imagePreview,
     };
-
-    const existingEvents =
-      JSON.parse(localStorage.getItem("blogsData")) || [];
-
-    localStorage.setItem(
-      "eventsData",
-      JSON.stringify([...existingEvents, newEvent])
-    );
-
+    console.log("New Created Blog:", newBlog);
     toast.success("Blog added successfully!");
     resetForm();
     navigate("/blogs/bloglist");
@@ -78,7 +69,7 @@ export default function AddEvent() {
 
           <button
             onClick={() => navigate("/blogs/bloglist")}
-            className="bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold py-2.5 px-6 rounded-full"
+            className="bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold py-2 px-2 rounded-lg"
           >
             Back to Blogs
           </button>
@@ -89,7 +80,7 @@ export default function AddEvent() {
             title: "",
             blogcategory: "",
             blogdate: "",
-            blogauthor: "",
+            blogsupervisor: "",
             blogvenue: "",
             blogdescription: "",
             image: null,
@@ -170,14 +161,14 @@ export default function AddEvent() {
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Author *
+                  Supervisor *
                 </label>
                 <Field
-                  name="blogauthor"
+                  name="blogsupervisor"
                   className="w-full border rounded-lg px-4 py-3"
                 />
                 <ErrorMessage
-                  name="blogauthor"
+                  name="blogsupervisor"
                   component="div"
                   className="text-red-500 text-sm"
                 />
@@ -203,7 +194,7 @@ export default function AddEvent() {
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Event Image *
+                  Blog Image *
                 </label>
 
                 {imagePreview ? (

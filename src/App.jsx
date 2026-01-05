@@ -9,8 +9,6 @@ import HeroSection from "./Pages/HeroSection";
 import Details from "./Pages/Details";
 import Banner from "./Pages/Banner";
 import OurFacilities from "./Pages/OurFacilities";
-import FAQ from "./Pages/FAQ";
-
 /* Team */
 import TeamTable from "./Component/PageComponent/Team/TeamTable";
 import AddTeam from "./Component/PageComponent/Team/AddTeam";
@@ -35,8 +33,6 @@ import AddBlog from "./Component/PageComponent/Blogs/AddBlog";
 import AddFacilities from "./Component/PageComponent/OurFacilities/AddFacilities";
 
 import CurriculumDetails from "./Component/PageComponent/Curriculum/CurriculumDetails";
-import ViewCurriculum from "./Component/PageComponent/Curriculum/ViewCurriculum";
-import EditCurriculum from "./Component/PageComponent/Curriculum/EditCurriculum";
 import OurAcademicProgram from "./Pages/OurAcademicProgram";
 import AddAcademicProgram from "./Component/PageComponent/OurAcademicProgram/AddAcademicProgram";
 
@@ -65,7 +61,7 @@ function App() {
         <Route path="/events/eventlist" element={<EventsTable />} />
         <Route path="/addevent" element={<AddEvent />} />
         <Route path="/events/eventlist/:view/:id" element={<EventsTable />} />
-        <Route path="/events/eventlist/:edit/:id" element={<EventsTable />} />
+        <Route path="/events/eventlist/:edit/:id" element={<EventsTable/>} />
 
         {/* blog pages */}
         <Route path="/blogs/blog-top-section" element={<BlogTopSection />} />
