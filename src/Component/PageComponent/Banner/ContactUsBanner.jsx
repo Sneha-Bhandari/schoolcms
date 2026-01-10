@@ -7,20 +7,15 @@ import { useState } from "react";
 const schema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   subtitle: Yup.string().required("Subtitle is required"),
-  imageid: Yup.number().required("Image is required"),
+  image: Yup.mixed().required("Image is required"),
 });
 
 const ContactUsBanner = () => {
-
   const [storedData, setStoredData] = useState(null);
-
-  const hasData = !!storedData;
-
-  const fileUpload = (file, setFieldValue) => {
-    const fakeId = Date.now();
-    const fakeUrl = URL.createObjectURL(file);
-    setFieldValue("imageid", fakeId);
-    setFieldValue("imageurl", fakeUrl);
+  const hasData = Boolean(storedData);
+  const handleFileUpload = (file, setFieldValue) => {
+    if (!file) return;
+    setFieldValue("image", file);
   };
 
   return (
@@ -36,17 +31,15 @@ const ContactUsBanner = () => {
         <Formik
           enableReinitialize
           initialValues={{
-            title: hasData ? storedData.title : "",
-            subtitle: hasData ? storedData.subtitle : "",
-            imageid: hasData ? storedData.imageid : "",
-            imageurl: hasData ? storedData.imageurl : "",
+            title: storedData?.title || "",
+            subtitle: storedData?.subtitle || "",
+            image: storedData?.image || null,
           }}
           validationSchema={schema}
           onSubmit={(values) => {
             setStoredData(values);
             alert(hasData ? "Updated successfully!" : "Saved successfully!");
             console.log("ContactUs Banner Data:", values);
-
           }}
         >
           {({ values, setFieldValue }) => (
@@ -58,9 +51,9 @@ const ContactUsBanner = () => {
                   htmlFor="contact-top-image"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-52 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.imageurl ? (
+                  {values.image ? (
                     <img
-                      src={values.imageurl}
+                      src={URL.createObjectURL(values.image)}
                       className="h-full w-full object-cover"
                       alt="preview"
                     />
@@ -74,14 +67,10 @@ const ContactUsBanner = () => {
                   type="file"
                   className="hidden"
                   accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    setFieldValue("imageurl", URL.createObjectURL(file));
-                    fileUpload(file, setFieldValue);
-                  }}
+                  onChange={(e) =>
+                    handleFileUpload(e.target.files[0], setFieldValue)
+                  }
                 />
-
                 <ErrorMessage
                   name="imageid"
                   component="div"
@@ -117,9 +106,9 @@ const ContactUsBanner = () => {
 
               <button
                 type="submit"
-                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 font-semibold  text-white py-2.5 px-4 w-fit rounded-xl cursor-pointer duration-500 transition-colors"
+                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 font-semibold  text-white py-2.5 px-4 w-fit rounded-xl cursor-pointer "
               >
-                {hasData ? "Update ContactUs Banner" : "Create ContactUs Banner"}
+                {hasData ? "Update Contact Banner" : "Create Contact Banner"}
               </button>
             </Form>
           )}
@@ -128,5 +117,4 @@ const ContactUsBanner = () => {
     </div>
   );
 };
-
 export default ContactUsBanner;

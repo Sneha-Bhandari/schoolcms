@@ -7,8 +7,7 @@ import JoditEditor from "jodit-react";
 const schema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
-  imageid: Yup.mixed().required("Image is required"),
-  imageUrl: Yup.string().required("Image preview required"),
+  image: Yup.mixed().required("Image is required"),
   imageTitle: Yup.string().required("Image title is required"),
   imageSubtitle: Yup.string().required("Image subtitle is required"),
   features: Yup.array()
@@ -18,17 +17,11 @@ const schema = Yup.object().shape({
 
 const WhoWeAre = () => {
   const [storedData, setStoredData] = useState(null);
-
   const hasData = Boolean(storedData);
 
-  const fileUpload = (file, setFieldValue) => {
+  const handleFileUpload = (file, setFieldValue) => {
     if (!file) return;
-
-    const fakeId = Date.now();
-    const fakeUrl = URL.createObjectURL(file);
-
-    setFieldValue("imageid", fakeId);
-    setFieldValue("imageUrl", fakeUrl);
+    setFieldValue("image", file);
   };
 
   return (
@@ -48,8 +41,7 @@ const WhoWeAre = () => {
           initialValues={{
             title: storedData?.title || "",
             description: storedData?.description || "",
-            imageid: storedData?.imageid || "",
-            imageUrl: storedData?.imageUrl || "",
+            image: storedData?.image || null,
             imageTitle: storedData?.imageTitle || "",
             imageSubtitle: storedData?.imageSubtitle || "",
             features: storedData?.features || [""],
@@ -64,6 +56,7 @@ const WhoWeAre = () => {
           {({ values, setFieldValue }) => (
             <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
 
+              {/* Image */}
               <div className="flex flex-col gap-2">
                 <label className="text-md font-medium">Image *</label>
 
@@ -71,9 +64,9 @@ const WhoWeAre = () => {
                   htmlFor="whoweare-image"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.imageUrl ? (
+                  {values.image ? (
                     <img
-                      src={values.imageUrl}
+                      src={URL.createObjectURL(values.image)}
                       className="h-full object-cover w-full"
                       alt="preview"
                     />
@@ -87,11 +80,13 @@ const WhoWeAre = () => {
                   type="file"
                   className="hidden"
                   accept="image/*"
-                  onChange={(e) => fileUpload(e.target.files[0], setFieldValue)}
+                  onChange={(e) =>
+                    handleFileUpload(e.target.files[0], setFieldValue)
+                  }
                 />
 
                 <ErrorMessage
-                  name="imageid"
+                  name="image"
                   component="div"
                   className="text-red-600 text-sm"
                 />
@@ -112,13 +107,11 @@ const WhoWeAre = () => {
 
               <div>
                 <label className="text-md font-medium">Description *</label>
-
                 <JoditEditor
                   value={values.description}
                   onBlur={(content) => setFieldValue("description", content)}
                   onChange={() => {}}
                 />
-
                 <ErrorMessage
                   name="description"
                   component="div"
@@ -162,7 +155,6 @@ const WhoWeAre = () => {
                       placeholder={`Feature ${index + 1}`}
                       className="border-2 border-blue-900 px-4 py-2 rounded-md w-full bg-white"
                     />
-
                     <button
                       type="button"
                       className="px-2 border rounded-md bg-red-600 hover:bg-red-500 text-white"

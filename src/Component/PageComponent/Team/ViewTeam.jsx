@@ -22,7 +22,7 @@ export default function ViewTeam({ item, onClose }) {
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="flex justify-center lg:justify-start lg:w-2/5">
             <img
-              src={item.imageid || "/placeholder.jpg"}
+              src={item.image || "/placeholder.jpg"}
               alt={item.name}
               className="w-full max-w-24 sm:max-w-sm lg:max-w-full h-auto object-cover rounded-lg shadow-md border-4 border-white"
             />

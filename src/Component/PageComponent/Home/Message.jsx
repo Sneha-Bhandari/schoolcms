@@ -5,26 +5,20 @@ import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
 
 const schema = Yup.object().shape({
-  imageid: Yup.mixed().required("Image is required"),
+  image: Yup.mixed().required("Image is required"),
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
   signature: Yup.mixed().required("Signature is required"),
   name: Yup.string().required("Name is required"),
 });
 
-const MessageSection = () => {
+const Message = () => {
   const [storedData, setStoredData] = useState(null);
-
   const hasData = Boolean(storedData);
 
-  const uploadFile = (file, setFieldValue, idField, urlField) => {
+  const handleFileUpload = (file, setFieldValue, fieldName) => {
     if (!file) return;
-
-    const fakeId = Date.now();
-    const fakeUrl = URL.createObjectURL(file);
-
-    setFieldValue(idField, fakeId);
-    setFieldValue(urlField, fakeUrl);
+    setFieldValue(fieldName, file);
   };
 
   return (
@@ -42,12 +36,10 @@ const MessageSection = () => {
         <Formik
           enableReinitialize
           initialValues={{
-            imageid: storedData?.imageid || "",
-            imageUrl: storedData?.imageUrl || "",
+            image: storedData?.image || null,
             title: storedData?.title || "",
             description: storedData?.description || "",
-            signature: storedData?.signature || "",
-            signatureUrl: storedData?.signatureUrl || "",
+            signature: storedData?.signature || null,
             name: storedData?.name || "",
           }}
           validationSchema={schema}
@@ -60,6 +52,7 @@ const MessageSection = () => {
           {({ values, setFieldValue }) => (
             <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
               
+              {/* Image */}
               <div className="flex flex-col gap-2">
                 <label className="text-md font-medium">Image *</label>
 
@@ -67,9 +60,9 @@ const MessageSection = () => {
                   htmlFor="message-image"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.imageUrl ? (
+                  {values.image ? (
                     <img
-                      src={values.imageUrl}
+                      src={URL.createObjectURL(values.image)}
                       className="h-full object-cover w-full"
                       alt="preview"
                     />
@@ -84,17 +77,16 @@ const MessageSection = () => {
                   className="hidden"
                   accept="image/*"
                   onChange={(e) =>
-                    uploadFile(
+                    handleFileUpload(
                       e.target.files[0],
                       setFieldValue,
-                      "imageid",
-                      "imageUrl"
+                      "image"
                     )
                   }
                 />
 
                 <ErrorMessage
-                  name="imageid"
+                  name="image"
                   component="div"
                   className="text-red-600 text-sm"
                 />
@@ -129,6 +121,7 @@ const MessageSection = () => {
                 />
               </div>
 
+              {/* Signature */}
               <div className="flex flex-col gap-2">
                 <label className="text-md font-medium">Signature *</label>
 
@@ -136,9 +129,9 @@ const MessageSection = () => {
                   htmlFor="message-signature"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-1/3 h-32 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.signatureUrl ? (
+                  {values.signature ? (
                     <img
-                      src={values.signatureUrl}
+                      src={URL.createObjectURL(values.signature)}
                       className="h-full object-cover w-full"
                       alt="signature"
                     />
@@ -153,11 +146,10 @@ const MessageSection = () => {
                   className="hidden"
                   accept="image/*"
                   onChange={(e) =>
-                    uploadFile(
+                    handleFileUpload(
                       e.target.files[0],
                       setFieldValue,
-                      "signature",
-                      "signatureUrl"
+                      "signature"
                     )
                   }
                 />
@@ -196,4 +188,4 @@ const MessageSection = () => {
   );
 };
 
-export default MessageSection;
+export default Message;

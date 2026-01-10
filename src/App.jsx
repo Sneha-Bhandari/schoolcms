@@ -35,6 +35,8 @@ import AddFacilities from "./Component/PageComponent/OurFacilities/AddFacilities
 import CurriculumDetails from "./Component/PageComponent/Curriculum/CurriculumDetails";
 import OurAcademicProgram from "./Pages/OurAcademicProgram";
 import AddAcademicProgram from "./Component/PageComponent/OurAcademicProgram/AddAcademicProgram";
+import Items from "./Component/PageComponent/Details/Items";
+import AddItems from "./Component/PageComponent/Details/Additems";
 
 function App() {
   return (
@@ -54,7 +56,12 @@ function App() {
         {/* CMS Pages */}
         <Route path="/VisionAndMission" element={<VisionAndMission />} />
         <Route path="/HeroSection" element={<HeroSection />} />
-        <Route path="/Details" element={<Details />} />
+
+        {/* Details Page */}
+        <Route path="/details" element={<Items />} />
+        <Route path="/details/add" element={<AddItems />} />
+        <Route path="/details/view/:id" element={<Items />} />
+        <Route path="/details/edit/:id" element={<Items />} />
 
         {/* Events */}
         <Route path="/events/event-top-section" element={<EventTopSection />} />
@@ -69,22 +76,12 @@ function App() {
         <Route path="/addblog" element={<AddBlog />} />
         <Route path="/blogs/bloglist/:view/:id" element={<BlogsTable />} />
         <Route path="/blogs/bloglist/:edit/:id" element={<BlogsTable />} />
-        {/* <Route path="/blogs/bloglist/delete/:id" element={<BlogsTable showDeletePage />}/> */}
 
         {/* Testimonial pages*/}
         <Route path="/testimonial" element={<TestimonialComponent />} />
-        <Route
-          path="/testimonial/addtestimonial"
-          element={<AddStudentForm />}
-        />
-        <Route
-          path="/testimonial/view/:id"
-          element={<TestimonialComponent />}
-        />
-        <Route
-          path="/testimonial/edit/:id"
-          element={<TestimonialComponent />}
-        />
+        <Route  path="/testimonial/addtestimonial"  element={<AddStudentForm />}/>
+        <Route  path="/testimonial/view/:id"  element={<TestimonialComponent />}/>
+        <Route  path="/testimonial/edit/:id"  element={<TestimonialComponent />}/>
 
         {/* Faq Pages */}
         <Route path="/faq" element={<FaqTable />} />

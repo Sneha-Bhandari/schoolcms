@@ -1,6 +1,7 @@
 import { Formik, Form, ErrorMessage } from "formik";
 import * as yup from "yup";
-import { MdOutlineBrowserUpdated, MdDelete } from "react-icons/md";
+import {  MdDelete } from "react-icons/md";
+import { FcEditImage } from "react-icons/fc";
 
 const imageSchema = yup.object().shape({
   images: yup
@@ -31,13 +32,13 @@ export default function ImageUpload() {
           }}
         >
           {({ values, setFieldValue }) => (
-            <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
+            <Form className="flex flex-col gap-4 shadow-2xl border shadow-blue-100 md:p-12 p-8 rounded-xl">
 
-              <div className="flex flex-col  gap-6 items-start">
+              <div className="flex flex-col gap-4">
                 {values.images.map((img, index) => (
                   <div
                     key={index}
-                    className="relative group  gap-3 h-42 w-64 rounded-md overflow-hidden border border-gray-300"
+                    className="relative group  gap-3 border-dashed border-2  h-40 w-full rounded-md  border-[#0B0C28] overflow-hidden "
                   >
                     <img
                       src={img instanceof File ? URL.createObjectURL(img) : img}
@@ -79,8 +80,8 @@ export default function ImageUpload() {
                   </div>
                 ))}
 
-                <label className="cursor-pointer flex flex-col items-center justify-center bg-gray-200 h-40 w-64 rounded-md border border-gray-300 gap-2">
-                  <MdOutlineBrowserUpdated className="text-3xl text-gray-600" />
+                <label className="cursor-pointer flex flex-col items-center justify-center border-dashed border-2  h-40 w-full rounded-md  border-[#0B0C28] gap-2">
+                <FcEditImage className="text-gray-300 text-5xl" />
                   <span>
                     {values.images.length === 0
                       ? "Upload first image"
@@ -109,7 +110,7 @@ export default function ImageUpload() {
 
               <button
                 type="submit"
-                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 w-fit px-10 text-white py-2 rounded-xl "
+                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 w-fit px-10 text-white py-2 rounded-xl cursor-pointer "
               >
                 Update Images
               </button>

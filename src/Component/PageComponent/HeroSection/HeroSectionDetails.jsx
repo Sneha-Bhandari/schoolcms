@@ -25,19 +25,20 @@ const HeroSectionDetails = () => {
       </div>
 
       <div className="md:w-10/15 w-full">
-        <Formik
-          enableReinitialize
-          initialValues={{
-            title: storedData?.title || "",
-            subtitle: storedData?.subtitle || "",
-            description: storedData?.description || "",
-          }}
-          validationSchema={schema}
-          onSubmit={(values) => {
-            setStoredData(values);
-            alert(hasData ? "Updated successfully!" : "Saved successfully!");
-          }}
-        >
+      <Formik
+  enableReinitialize
+  initialValues={{
+    title: storedData?.title || "",
+    subtitle: storedData?.subtitle || "",
+    description: storedData?.description || "",
+  }}
+  validationSchema={schema}
+  onSubmit={(values) => {
+    setStoredData(values);
+    alert(hasData ? "Updated successfully!" : "Saved successfully!");
+    console.log("Hero Section Top Details:", values);
+  }}
+>
           {({ values, setFieldValue }) => (
             <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
               <div>

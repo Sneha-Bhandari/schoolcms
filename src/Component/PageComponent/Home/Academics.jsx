@@ -7,22 +7,16 @@ import JoditEditor from "jodit-react";
 const schema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
-  image1id: Yup.number().required("Image 1 is required"),
-  image1Url: Yup.string().required("Image 1 preview required"),
-  image2id: Yup.number().required("Image 2 is required"),
-  image2Url: Yup.string().required("Image 2 preview required"),
+  image1: Yup.mixed().required("Image 1 is required"),
+  image2: Yup.mixed().required("Image 2 is required"),
 });
 
 const Academics = () => {
   const [storedData, setStoredData] = useState(null);
-
   const hasData = Boolean(storedData);
 
-  const fileUpload = (file, setFieldValue, fieldId, fieldUrl) => {
-    const fakeId = Date.now();
-    const fakeUrl = URL.createObjectURL(file);
-    setFieldValue(fieldId, fakeId);
-    setFieldValue(fieldUrl, fakeUrl);
+  const handleFileUpload = (file, setFieldValue, fieldName) => {
+    setFieldValue(fieldName, file);
   };
 
   return (
@@ -42,10 +36,8 @@ const Academics = () => {
           initialValues={{
             title: storedData?.title || "",
             description: storedData?.description || "",
-            image1id: storedData?.image1id || "",
-            image1Url: storedData?.image1Url || "",
-            image2id: storedData?.image2id || "",
-            image2Url: storedData?.image2Url || "",
+            image1: storedData?.image1 || null,
+            image2: storedData?.image2 || null,
           }}
           validationSchema={schema}
           onSubmit={(values) => {
@@ -83,72 +75,83 @@ const Academics = () => {
                 />
               </div>
 
-<div className="flex  w-full gap-6">
-<div className="flex flex-col gap-2 w-1/2">
-                <label className="text-md font-medium">Image 1 *</label>
-                <label
-                  htmlFor="academic-image1"
-                  className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
-                >
-                  {values.image1Url ? (
-                    <img
-                      src={values.image1Url}
-                      className="h-full object-cover w-full"
-                      alt="preview"
-                    />
-                  ) : (
-                    <FcEditImage className="text-gray-300 text-5xl" />
-                  )}
-                </label>
-                <input
-                  id="academic-image1"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) =>
-                    fileUpload(e.target.files[0], setFieldValue, "image1id", "image1Url")
-                  }
-                />
-                <ErrorMessage
-                  name="image1id"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+              <div className="flex w-full gap-6">
+                {/* Image 1 */}
+                <div className="flex flex-col gap-2 w-1/2">
+                  <label className="text-md font-medium">Image 1 *</label>
 
-              <div className="flex flex-col gap-2 w-1/2">
-                <label className="text-md font-medium">Image 2 *</label>
-                <label
-                  htmlFor="academic-image2"
-                  className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
-                >
-                  {values.image2Url ? (
-                    <img
-                      src={values.image2Url}
-                      className="h-full object-cover w-full"
-                      alt="preview"
-                    />
-                  ) : (
-                    <FcEditImage className="text-gray-300 text-5xl" />
-                  )}
-                </label>
-                <input
-                  id="academic-image2"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) =>
-                    fileUpload(e.target.files[0], setFieldValue, "image2id", "image2Url")
-                  }
-                />
-                <ErrorMessage
-                  name="image2id"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
+                  <label
+                    htmlFor="academic-image1"
+                    className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
+                  >
+                    {values.image1 ? (
+                      <img
+                        src={URL.createObjectURL(values.image1)}
+                        className="h-full object-cover w-full"
+                        alt="preview"
+                      />
+                    ) : (
+                      <FcEditImage className="text-gray-300 text-5xl" />
+                    )}
+                  </label>
+
+                  <input
+                    id="academic-image1"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      handleFileUpload(file, setFieldValue, "image1");
+                    }}
+                  />
+
+                  <ErrorMessage
+                    name="image1"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                {/* Image 2 */}
+                <div className="flex flex-col gap-2 w-1/2">
+                  <label className="text-md font-medium">Image 2 *</label>
+
+                  <label
+                    htmlFor="academic-image2"
+                    className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
+                  >
+                    {values.image2 ? (
+                      <img
+                        src={URL.createObjectURL(values.image2)}
+                        className="h-full object-cover w-full"
+                        alt="preview"
+                      />
+                    ) : (
+                      <FcEditImage className="text-gray-300 text-5xl" />
+                    )}
+                  </label>
+
+                  <input
+                    id="academic-image2"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      handleFileUpload(file, setFieldValue, "image2");
+                    }}
+                  />
+
+                  <ErrorMessage
+                    name="image2"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
               </div>
-</div>
-             
 
               <button
                 type="submit"
