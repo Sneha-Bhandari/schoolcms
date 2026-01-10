@@ -8,8 +8,7 @@ const schema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   subtitle: Yup.string().required("Subtitle is required"),
   description: Yup.string().required("Description is required"),
-  imageid: Yup.number().required("Image is required"),
-  imageUrl: Yup.string().required("Image preview required"),
+  image: Yup.mixed().required("Image is required"),
   features: Yup.array()
     .of(Yup.string().required("Feature cannot be empty"))
     .min(1, "Add at least one feature"),
@@ -19,12 +18,8 @@ const WhyChooseUs = () => {
   const [storedData, setStoredData] = useState(null);
   const hasData = Boolean(storedData);
 
-  const fileUpload = (file, setFieldValue) => {
-    const fakeId = Date.now();
-    const fakeUrl = URL.createObjectURL(file);
-
-    setFieldValue("imageid", fakeId);
-    setFieldValue("imageUrl", fakeUrl);
+  const handleFileUpload = (file, setFieldValue) => {
+    setFieldValue("image", file);
   };
 
   return (
@@ -38,15 +33,14 @@ const WhyChooseUs = () => {
         </p>
       </div>
 
-      <div className="md:w-10/15 w-full">
+      <div className="md:w-10/16 w-full">
         <Formik
           enableReinitialize
           initialValues={{
             title: storedData?.title || "",
             subtitle: storedData?.subtitle || "",
             description: storedData?.description || "",
-            imageid: storedData?.imageid || "",
-            imageUrl: storedData?.imageUrl || "",
+            image: storedData?.image || null,
             features: storedData?.features || [""],
           }}
           validationSchema={schema}
@@ -65,9 +59,9 @@ const WhyChooseUs = () => {
                   htmlFor="whychooseus-image"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.imageUrl ? (
+                  {values.image ? (
                     <img
-                      src={values.imageUrl}
+                      src={URL.createObjectURL(values.image)}
                       className="h-full object-cover w-full"
                       alt="preview"
                     />
@@ -84,13 +78,12 @@ const WhyChooseUs = () => {
                   onChange={(e) => {
                     const file = e.target.files[0];
                     if (!file) return;
-
-                    fileUpload(file, setFieldValue);
+                    handleFileUpload(file, setFieldValue);
                   }}
                 />
 
                 <ErrorMessage
-                  name="imageid"
+                  name="image"
                   component="div"
                   className="text-red-600 text-sm"
                 />
@@ -100,7 +93,7 @@ const WhyChooseUs = () => {
                 <label className="text-md font-medium">Title *</label>
                 <Field
                   name="title"
-                  className="border-2 border-blue-900 px-4 py-2 rounded-md w-full "
+                  className="border-2 border-blue-900 px-4 py-2 rounded-md w-full"
                 />
                 <ErrorMessage
                   name="title"
@@ -123,22 +116,17 @@ const WhyChooseUs = () => {
               </div>
 
               <div>
-                <label className="text-md font-medium">
-                  Description (Jodit) *
-                </label>
-
+                <label className="text-md font-medium">Description  *</label>
                 <JoditEditor
-  value={values.description}
-  onBlur={(content) => setFieldValue("description", content)}
-  onChange={() => {}}
-  config={{
-    readonly: false,
-    minHeight: 250,
-    spellcheck: false,
-  }}
-/>
-
-
+                  value={values.description}
+                  onBlur={(content) => setFieldValue("description", content)}
+                  onChange={() => {}}
+                  config={{
+                    readonly: false,
+                    minHeight: 250,
+                    spellcheck: false,
+                  }}
+                />
                 <ErrorMessage
                   name="description"
                   component="div"
@@ -156,7 +144,6 @@ const WhyChooseUs = () => {
                       placeholder={`Feature ${index + 1}`}
                       className="border-2 border-blue-900 px-4 py-2 rounded-md w-full bg-white"
                     />
-
                     <button
                       type="button"
                       className="px-2 border rounded-md bg-red-600 hover:bg-red-500 text-white"
@@ -185,7 +172,7 @@ const WhyChooseUs = () => {
 
               <button
                 type="submit"
-                className="bg-[#0B0C28] font-semibold  bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-4 w-fit rounded-xl"
+                className="bg-[#0B0C28] font-semibold bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-4 w-fit rounded-xl"
               >
                 {hasData ? "Update Section" : "Create Section"}
               </button>

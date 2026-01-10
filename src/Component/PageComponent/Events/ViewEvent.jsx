@@ -21,7 +21,7 @@ export default function ViewEvent({ item, onClose }) {
         <div className="flex flex-col gap-6">
           <div className="flex justify-center">
             <img
-              src={item.imageUrl || "/placeholder.jpg"}
+              src={item.image || "/placeholder.jpg"}
               alt={item.title}
               className="w-full max-w-sm object-cover rounded-lg shadow-md"
             />
@@ -39,7 +39,7 @@ export default function ViewEvent({ item, onClose }) {
               <h4 className="text-sm font-semibold text-gray-500 uppercase">
                 Category
               </h4>
-              <p className="text-gray-800">{item.eventcategory}</p>
+              <p className="text-gray-800">{item.category}</p>
             </div>
 
             <div>
@@ -47,7 +47,7 @@ export default function ViewEvent({ item, onClose }) {
                 Date
               </h4>
               <p className="text-gray-800">
-                {new Date(item.eventdate).toLocaleDateString()}
+                {new Date(item.date).toLocaleDateString()}
               </p>
             </div>
 
@@ -55,7 +55,7 @@ export default function ViewEvent({ item, onClose }) {
               <h4 className="text-sm font-semibold text-gray-500 uppercase">
                 Author
               </h4>
-              <p className="text-gray-800">{item.eventauthor}</p>
+              <p className="text-gray-800">{item.author}</p>
             </div>
 
             <div>
@@ -65,7 +65,7 @@ export default function ViewEvent({ item, onClose }) {
               <div
                 className="prose max-w-none text-gray-700"
                 dangerouslySetInnerHTML={{
-                  __html: item.eventdescription,
+                  __html: item.description,
                 }}
               />
             </div>

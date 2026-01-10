@@ -1,7 +1,7 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./HOC/Layout";
-
+// import BlogsTable from "./pages/blogs/BlogsTable";
 import Home from "./Pages/Home";
 import About from "./Pages/About";
 import VisionAndMission from "./Pages/VisionAndMission";
@@ -69,6 +69,7 @@ function App() {
         <Route path="/addblog" element={<AddBlog />} />
         <Route path="/blogs/bloglist/:view/:id" element={<BlogsTable />} />
         <Route path="/blogs/bloglist/:edit/:id" element={<BlogsTable />} />
+        {/* <Route path="/blogs/bloglist/delete/:id" element={<BlogsTable showDeletePage />}/> */}
 
         {/* Testimonial pages*/}
         <Route path="/testimonial" element={<TestimonialComponent />} />

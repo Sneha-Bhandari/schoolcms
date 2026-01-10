@@ -2,225 +2,170 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
-import { MdClose } from "react-icons/md";
-import { BsImages } from "react-icons/bs";
+import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
 
 const EventSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
-  eventcategory: Yup.string().required("Category is required"),
-  eventdate: Yup.date().required("Date is required"),
-  eventauthor: Yup.string().required("Author is required"),
-  eventdescription: Yup.string().required("Description is required"),
-  imageid: Yup.number().required("Image is required"),
+  category: Yup.string().required("Category is required"),
+  date: Yup.string().required("Date is required"),
+  author: Yup.string().required("Author is required"),
+  description: Yup.string().required("Description is required"),
 });
 
 export default function EditEvent({ item, onClose, onUpdate }) {
-  const [imagePreview, setImagePreview] = useState(item?.imageUrl);
+  const [image, setImage] = useState(item.image);
 
   if (!item) return null;
-
-  const handleImageChange = (e, setFieldValue) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const url = URL.createObjectURL(file);
-    const id = Date.now();
-
-    setImagePreview(url);
-    setFieldValue("imageUrl", url);
-    setFieldValue("imageid", id);
-  };
-
   const handleSubmit = (values) => {
     const updatedEvent = {
       ...item,
-      title: values.title,
-      eventcategory: values.eventcategory,
-      eventdate: values.eventdate,
-      eventauthor: values.eventauthor,
-      eventdescription: values.eventdescription,
-
-      imageUrl: values.imageUrl,
-      imageid: values.imageid,
+      ...values,
+      image,
     };
-
-    console.log("UPDATED EVENT:", updatedEvent);
-
+  alert("Click Ok if you want to save this edited data");
+    console.log("EDITED EVENT DATA 👉", updatedEvent); 
+  
     onUpdate(updatedEvent);
     toast.success("Event updated successfully!");
     onClose();
   };
-
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold">Edit Event</h2>
-          <button onClick={onClose}>
-            <div className="bg-red-500 text-white rounded-full p-1.5 hover:bg-black transition">
-              <MdClose size={20} />
-            </div>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 h-full">
+      <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto h-11/12 overflow-scroll">
+
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold">Edit Event</h2>
+          <button
+            onClick={onClose}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl"
+          >
+            Back
           </button>
         </div>
 
-        <div className="p-6">
-          <Formik
-            enableReinitialize
-            initialValues={{
-              title: item.title || "",
-              eventcategory: item.eventcategory || "",
-              eventdate: item.eventdate || "",
-              eventauthor: item.eventauthor || "",
-              eventdescription: item.eventdescription || "",
-              imageUrl: item.imageUrl || "",
-              imageid: item.imageid || "",
-            }}
-            validationSchema={EventSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ values, setFieldValue }) => (
-              <Form className="space-y-6">
+        <Formik
+          initialValues={{
+            title: item.title,
+            category: item.category,
+            date: item.date,
+            author: item.author,
+            description: item.description,
+          }}
+          validationSchema={EventSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="space-y-6">
 
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Event Image *
-                  </label>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Event Image
+                </label>
 
-                  <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                    {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-40 h-40 mx-auto rounded-lg object-cover mb-3"
-                      />
-                    )}
-
-                    <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex items-center gap-2">
-                      <BsImages /> Change Image
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, setFieldValue)}
-                      />
-                    </label>
-
-                    <ErrorMessage
-                      name="imageid"
-                      component="div"
-                      className="text-red-600 text-sm mt-2"
+                <label
+                  htmlFor="edit-image"
+                  className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-48 flex items-center justify-center rounded-md overflow-hidden"
+                >
+                  {image ? (
+                    <img
+                      src={image}
+                      alt="Event"
+                      className="h-full w-full object-cover"
                     />
-                  </div>
-                </div>
+                  ) : (
+                    <FcEditImage className="text-5xl text-gray-300" />
+                  )}
+                </label>
 
-         
-                <div>
-                  <label className="block text-sm font-semibold mb-1">
-                    Title *
-                  </label>
-                  <Field
-                    name="title"
-                    className="w-full border rounded-lg px-3 py-2"
-                  />
-                   <ErrorMessage
+                <input
+                  id="edit-image"
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    setImage(URL.createObjectURL(file));
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2">Title *</label>
+                <Field
+                  className="w-full border rounded-lg px-4 py-3"
                   name="title"
-                  component="div"
-                  className="text-red-500 text-sm"
                 />
-                </div>
+                <ErrorMessage name="title" component="div" className="text-red-500 text-sm" />
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold mb-1">
-                    Author *
-                  </label>
-                  <Field
-                    name="eventauthor"
-                    className="w-full border rounded-lg px-3 py-2"
-                  />
-                   <ErrorMessage
-                  name="eventauthor"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-1">
-                    Category *
-                  </label>
+                  <label className="text-sm font-medium mb-2">Category *</label>
                   <Field
                     as="select"
-                    name="eventcategory"
-                    className="w-full border rounded-lg px-3 py-2"
+                    name="category"
+                    className="w-full border rounded-lg px-4 py-3"
                   >
                     <option value="">Select</option>
                     <option value="Upcoming">Upcoming</option>
                     <option value="Current">Current</option>
                     <option value="Past">Past</option>
                   </Field>
-                  <ErrorMessage
-                  name="eventcategory"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-1">
-                    Date *
-                  </label>
+                  <label className="text-sm font-medium mb-2">Date *</label>
                   <Field
                     type="date"
-                    name="eventdate"
-                    className="w-full border rounded-lg px-3 py-2"
+                    name="date"
+                    className="w-full border rounded-lg px-4 py-3"
                   />
-                   <ErrorMessage
-                  name="eventdate"
-                  component="div"
-                  className="text-red-500 text-sm"
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2">Author *</label>
+                <Field
+                  className="w-full border rounded-lg px-4 py-3"
+                  name="author"
                 />
-                </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-semibold mb-1">
-                    Description *
-                  </label>
+              <div>
+                <label className="text-sm font-medium mb-2">
+                  Description *
+                </label>
 
-                  <JoditEditor
-                    value={values.eventdescription}
-                    onBlur={(content) =>
-                      setFieldValue("eventdescription", content)
-                    }
-                  />
+                <JoditEditor
+                  value={values.description}
+                  onBlur={(content) =>
+                    setFieldValue("description", content)
+                  }
+                />
+              </div>
 
-                  <ErrorMessage
-                    name="eventdescription"
-                    component="div"
-                    className="text-red-600 text-sm"
-                  />
-                </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white px-6 py-3 rounded-xl"
+                >
+                  Update Event
+                </button>
 
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="submit"
-                    className="bg-linear-to-r from-[#0B0C28] to-cyan-400 cursor-pointer text-white px-4 py-2.5 rounded-lg"
-                  >
-                    Update Event
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="bg-gray-500 hover:bg-gray-600 cursor-pointer text-white px-4 py-2.5 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl"
+                >
+                  Cancel
+                </button>
+              </div>
 
-              </Form>
-            )}
-          </Formik>
-        </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

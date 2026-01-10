@@ -8,72 +8,68 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function EventsTable() {
   const navigate = useNavigate();
   const params = useParams();
+
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [eventsData, setEventsData] = useState([
     {
       id: 1,
       title: "Highlights from the Annual Sports Day 2025",
-      eventcategory: "Current",
-      eventdate: "2025-01-05",
-      eventauthor: "School Activities Team",
-      eventdescription: "A major tech event with speakers from all over Nepal.",
-      imageUrl: "/aca2.jpg",
-      imageid: 111,
+      category: "Current",
+      date: "2025-01-05",
+      author: "School Activities Team",
+      description: "A major tech event with speakers from all over Nepal.",
+      image: "/aca2.jpg",
     },
     {
       id: 2,
       title: "How Our Students Learn Beyond the Classroom",
-      eventcategory: "Upcoming",
-      eventdate: "2025-02-12",
-      eventauthor: "School Activities Team",
-      eventdescription: "Learn full-stack development in 2 weeks.",
-      imageUrl: "/aca2.jpg",
-      imageid: 222,
+      category: "Upcoming",
+      date: "2025-02-12",
+      author: "School Activities Team",
+      description: "Learn full-stack development in 2 weeks.",
+      image: "/aca2.jpg",
     },
     {
       id: 3,
-      title: "How Our Students Learn Beyond the Classroom",
-      eventcategory: "Upcoming",
-      eventdate: "2025-02-12",
-      eventauthor: "School Activities Team",
-      eventdescription: "Learn full-stack development in 2 weeks.",
-      imageUrl: "/aca2.jpg",
-      imageid: 333,
+      title: "Campus Cultural Fest 2025",
+      category: "Past",
+      date: "2024-10-22",
+      author: "Cultural Club",
+      description: "Celebrating arts, music, and creativity on campus.",
+      image: "/aca2.jpg",
     },
     {
       id: 4,
-      title: "How Our Students Learn Beyond the Classroom",
-      eventcategory: "Upcoming",
-      eventdate: "2025-02-12",
-      eventauthor: "School Activities Team",
-      eventdescription: "Learn full-stack development in 2 weeks.",
-      imageUrl: "/aca2.jpg",
-      imageid: 444,
+      title: "Campus Cultural Fest 2025",
+      category: "Past",
+      date: "2024-10-22",
+      author: "Cultural Club",
+      description: "Celebrating arts, music, and creativity on campus.",
+      image: "/aca2.jpg",
     },
     {
       id: 5,
-      title: "How Our Students Learn Beyond the Classroom",
-      eventcategory: "Upcoming",
-      eventdate: "2025-02-12",
-      eventauthor: "School Activities Team",
-      eventdescription: "Learn full-stack development in 2 weeks.",
-      imageUrl: "/aca2.jpg",
-      imageid: 555,
+      title: "Campus Cultural Fest 2025",
+      category: "Past",
+      date: "2024-10-22",
+      author: "Cultural Club",
+      description: "Celebrating arts, music, and creativity on campus.",
+      image: "/aca2.jpg",
     },
   ]);
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
   const [viewId, setViewId] = useState(null);
   const [editId, setEditId] = useState(null);
 
   const selectedViewItem = eventsData.find((m) => m.id === viewId);
   const selectedEditItem = eventsData.find((m) => m.id === editId);
-
-  const itemsPerPage = 3;
 
   const totalPages = Math.ceil(eventsData.length / itemsPerPage);
   const paginatedEvents = eventsData.slice(
@@ -136,14 +132,20 @@ export default function EventsTable() {
 
   const truncateDescription = (text, maxLength = 100) => {
     if (!text) return "—";
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
-
+const headers=[
+  "Image",
+  "Title",
+  "Category",
+  "Date",
+  "Author",
+  "Description",
+  "Actions"]
+  
   return (
     <div className="w-11/12 mx-auto py-8 relative">
-      <div className="flex  flex-col md:justify-start md:items-start gap-2 justify-center items-center mb-6">
+      <div className="flex flex-col md:items-start items-center gap-2 mb-6">
         <h2 className="text-2xl font-semibold underline underline-offset-2 text-gray-800">
           Events & Updates
         </h2>
@@ -152,81 +154,71 @@ export default function EventsTable() {
           description
         </p>
       </div>
+
       <button
         onClick={() => navigate("/addevent")}
-        className="bg-linear-to-r from-[#0B0C28] to-cyan-400 mb-5 cursor-pointer text-white font-semibold py-2.5 px-6 rounded-lg "
+        className="bg-linear-to-r from-[#0B0C28] to-cyan-400 mb-5 cursor-pointer text-white font-semibold py-2.5 px-6 rounded-lg"
       >
         Add Event
       </button>
+
       <div className="overflow-x-auto border border-gray-200 rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
-            <tr>
-              {[
-                "Image",
-                "Title",
-                "Category",
-                "Date",
-                "Author",
-                "Description",
-                "Actions",
-              ].map((header, i) => (
+          <tr>
+              {headers.map((head, idx) => (
                 <th
-                  key={i}
-                  className={`py-4 px-5 text-center text-xs font-semibold uppercase text-gray-600 ${
-                    header === "Actions" ? "text-center" : ""
-                  }`}
+                  key={idx}
+                  className="py-3 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wide text-center"
                 >
-                  {header}
+                  {head}
                 </th>
               ))}
             </tr>
           </thead>
 
-          <tbody className="bg-white divide-y divide-gray-500">
+          <tbody className="bg-white divide-y divide-gray-200">
             {paginatedEvents.map((event) => (
-              <tr key={event.id} className="hover:bg-gray-50 text-start">
-                <td className="py-3 px-5">
+              <tr key={event.id} className="hover:bg-gray-50">
+                <td className="py-3 px-5 text-center">
                   <img
-                    src={event.imageUrl}
+                    src={event.image}
                     alt={event.title}
                     className="w-14 h-14 object-cover rounded-lg border"
                   />
                 </td>
 
-                <td className="py-3 px-2 text-sm text-gray-800 truncate max-w-52 ">
+                <td className="py-3 px-5 text-sm text-gray-800 max-w-52 truncate">
                   {event.title}
                 </td>
 
                 <td className="py-3 px-5">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                      event.eventcategory
+                      event.category
                     )}`}
                   >
-                    {event.eventcategory}
+                    {event.category}
                   </span>
                 </td>
 
                 <td className="py-3 px-5 text-gray-600">
-                  {new Date(event.eventdate).toLocaleDateString()}
+                  {new Date(event.date).toLocaleDateString()}
                 </td>
 
-                <td className="py-3 px-5 text-gray-700  text-sm ">
-                  {event.eventauthor}
+                <td className="py-3 px-5 text-gray-700 text-sm">
+                  {event.author}
                 </td>
 
                 <td className="py-3 px-5 text-gray-600 max-w-xs">
                   <div className="line-clamp-2">
-                    {truncateDescription(event.eventdescription)}
+                    {truncateDescription(event.description)}
                   </div>
                 </td>
 
                 <td className="py-3 px-3 text-center relative">
                   <button
-                    onClick={(e) => {
-                      toggleDropdown(e, event.id);
-                    }}
+                    onClick={(e) => toggleDropdown(e, event.id)}
                     className="dropdown-button inline-flex items-center justify-center h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-full cursor-pointer"
                   >
                     <MdMoreVert size={18} />
@@ -248,28 +240,26 @@ export default function EventsTable() {
 
       {open && (
         <div
-          className="dropdown-menu fixed z-50 w-40 bg-linear-to-r from-[#d2d2db] to-white border rounded-lg shadow"
+          className="dropdown-menu fixed z-50 w-40 bg-white border rounded-lg shadow"
           style={{ top: dropdownPos.top, left: dropdownPos.left }}
         >
           <button
             onClick={() => navigate(`/events/eventlist/view/${selectedId}`)}
-            className="w-full px-4 py-2 flex gap-2 text-blue-700 items-center cursor-pointer"
+            className="w-full px-4 py-2 flex gap-2 text-blue-700 items-center"
           >
             <MdVisibility /> View
           </button>
 
           <button
             onClick={() => navigate(`/events/eventlist/edit/${selectedId}`)}
-            className="w-full px-4 py-2 flex gap-2 text-green-700 items-center cursor-pointer"
+            className="w-full px-4 py-2 flex gap-2 text-green-700 items-center"
           >
             <MdEdit /> Edit
           </button>
 
           <button
-            onClick={() => {
-              setConfirmDeleteId(selectedId);
-            }}
-            className="w-full px-4 py-2 flex gap-2 text-red-600 items-center cursor-pointer"
+            onClick={() => setConfirmDeleteId(selectedId)}
+            className="w-full px-4 py-2 flex gap-2 text-red-600 items-center"
           >
             <MdDelete /> Delete
           </button>
@@ -311,14 +301,14 @@ export default function EventsTable() {
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => handleDelete(confirmDeleteId)}
-                className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold cursor-pointer"
+                className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold"
               >
                 Yes
               </button>
 
               <button
                 onClick={() => setConfirmDeleteId(null)}
-                className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold cursor-p"
+                className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold"
               >
                 No
               </button>

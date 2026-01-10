@@ -18,21 +18,21 @@ export default function ViewBlog({ item, onClose }) {
 
         <img
           src={item.image}
-          className="w-full max-w-sm mx-auto rounded-lg mb-6"
+          className="w-full max-w-11/14 mx-auto rounded-lg mb-6"
           alt={item.title}
         />
 
         <div className="space-y-3">
           <p><strong>Title:</strong> {item.title}</p>
-          <p><strong>Category:</strong> {item.blogcategory}</p>
-          <p><strong>Date:</strong> {new Date(item.blogdate).toLocaleDateString()}</p>
-          <p><strong>Supervisor:</strong> {item.blogsupervisor}</p>
-            <p><strong>Venue:</strong>{item.blogvenue}</p>
+          <p><strong>Category:</strong> {item.category}</p>
+          <p><strong>Date:</strong> {new Date(item.date).toLocaleDateString()}</p>
+          <p><strong>Supervisor:</strong> {item.supervisor}</p>
+            <p><strong>Venue:</strong>{item.venue}</p>
           <p className="flex gap-2 font-bold">Description:
           </p>
           <div
             className="prose"
-            dangerouslySetInnerHTML={{ __html: item.blogdescription }}
+            dangerouslySetInnerHTML={{ __html: item.description }}
           />
         </div>
       </div>

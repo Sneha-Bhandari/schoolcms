@@ -5,8 +5,7 @@ import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
 
 const schema = Yup.object().shape({
-  imageid: Yup.number().required("Image is required"),
-  imageUrl: Yup.string().required("Image preview required"),
+  image: Yup.string().required("Image is required"),
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
 
@@ -28,11 +27,7 @@ const AboutSchool = () => {
   const hasData = Boolean(storedData);
 
   const fileUpload = (file, setFieldValue) => {
-    const fakeId = Date.now();
-    const fakeUrl = URL.createObjectURL(file);
-
-    setFieldValue("imageid", fakeId);
-    setFieldValue("imageUrl", fakeUrl);
+    setFieldValue("image", file);
   };
 
   return (
@@ -50,8 +45,7 @@ const AboutSchool = () => {
         <Formik
           enableReinitialize
           initialValues={{
-            imageid: storedData?.imageid || "",
-            imageUrl: storedData?.imageUrl || "",
+            image: storedData?.image || null,
             title: storedData?.title || "",
             description: storedData?.description || "",
             stats: storedData?.stats || [{ value: "", label: "" }],
@@ -72,9 +66,9 @@ const AboutSchool = () => {
                   htmlFor="aboutschool-img"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.imageUrl ? (
+                  {values.image ? (
                     <img
-                      src={values.imageUrl}
+                      src={URL.createObjectURL(values.image)}
                       alt="preview"
                       className="h-full w-full object-cover"
                     />
@@ -117,7 +111,7 @@ const AboutSchool = () => {
 
               <div>
                 <label className="text-md font-medium">
-                  Description (Jodit) *
+                  Description 
                 </label>
 
                 <JoditEditor
@@ -186,10 +180,33 @@ const AboutSchool = () => {
 
               <button
                 type="submit"
-                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-6 rounded-xl font-semibold"
+                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-6 rounded-xl font-semibold cursor-pointer"
               >
                 {hasData ? "Update Section" : "Create Section"}
               </button>
+              {storedData && (
+                <div className="mt-2  p-2 w-full">
+                  <h4 className="text-xl font-semibold mb-4 text-[#797aa9]">
+                    Achievements Preview
+                  </h4>
+
+                  <div className="grid grid-cols-3 gap-3 ">
+                    {storedData.stats.map((stat, index) => (
+                      <div
+                        key={index}
+                        className="bg-white border rounded-xl p-5 text-center shadow hover:shadow-lg transition"
+                      >
+                        <p className="text-3xl font-bold text-[#0B0C28]">
+                          {stat.value}
+                        </p>
+                        <p className="text-lg text-gray-600 mt-1">
+                          {stat.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </Form>
           )}
         </Formik>
