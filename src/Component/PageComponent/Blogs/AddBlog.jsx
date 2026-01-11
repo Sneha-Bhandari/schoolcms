@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
+import { ImSpinner2 } from "react-icons/im";
 
 const BlogSchema = Yup.object().shape({
-  // image: Yup.mixed().required("Image is required"),
+  image: Yup.mixed()
+    .required("Image is required")
+    .test(
+      "fileType",
+      "Only image files are allowed",
+      (value) =>
+        value &&
+        ["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+          value.type
+        )
+    ),
   title: Yup.string().required("Title is required"),
   category: Yup.string().required("Category is required"),
   date: Yup.string().required("Date is required"),
@@ -18,23 +29,36 @@ const BlogSchema = Yup.object().shape({
 
 export default function AddBlog() {
   const navigate = useNavigate();
+  const [load, setloading] = useState(false);
 
-  const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      setloading(true);
 
-  const handleSubmit = (values, { resetForm }) => {
-    const newBlog = { ...values, image };
-    alert("Click OK to add this blog");
-    console.log("New Blog Data 👉", newBlog);
-    toast.success("Blog added successfully!");
-    resetForm();
-    setImage(null);
-    setPreview(null);
-    navigate("/blogs/bloglist");
+      console.log("New Blog Data", values); 
+
+      // simulate API delay
+      await new Promise((res) => setTimeout(res, 1500));
+
+      toast.success("Blog added successfully!");
+
+      resetForm();
+      setPreview(null);
+
+      setTimeout(() => {
+        navigate("/blogs/bloglist");
+      }, 1200);
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      setloading(false);
+    }
   };
 
   return (
     <div className="w-full py-8 px-4">
+      <Toaster position="top-right" />
       <div className="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">Add Blog</h2>
@@ -73,7 +97,7 @@ export default function AddBlog() {
                     <img
                       src={preview}
                       alt="Blog"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <FcEditImage className="text-5xl text-gray-300" />
@@ -89,8 +113,8 @@ export default function AddBlog() {
                     const file = e.target.files[0];
                     if (!file) return;
 
-                    setImage(file); // ✅ store File
-                    setPreview(URL.createObjectURL(file)); // ✅ preview only
+                    setFieldValue("image", file); // ✅ Formik image
+                    setPreview(URL.createObjectURL(file)); // preview
                   }}
                 />
               </div>
@@ -190,9 +214,22 @@ export default function AddBlog() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white px-4 py-3 rounded-xl"
+                  disabled={load}
+                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white
+    ${
+      load
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-linear-to-r from-[#0B0C28] to-cyan-400"
+    }`}
                 >
-                  Add Blog
+                  {load ? (
+                    <>
+                      <ImSpinner2 className="animate-spin text-lg" />
+                      Loading...
+                    </>
+                  ) : (
+                    "Add Blog"
+                  )}
                 </button>
                 <button
                   type="button"

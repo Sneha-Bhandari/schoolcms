@@ -241,7 +241,7 @@ export default function BlogsTable() {
         >
           <button
             onClick={() => navigate(`/blogs/bloglist/view/${selectedId}`)}
-            className="w-full px-4 py-2 flex gap-2 text-blue-700 items-center"
+            className="w-full px-4 py-2  gap-2 text-blue-700 items-center flex"
           >
             <MdVisibility /> View
           </button>

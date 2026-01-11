@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+// Updated validation schema including mapUrl
 const schema = Yup.object().shape({
   address: Yup.string().required("Address is required"),
   phone: Yup.string()
@@ -10,6 +11,9 @@ const schema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
+  mapUrl: Yup.string()
+    .url("Invalid URL format")
+    .required("Map URL is required"),
 });
 
 const ContactInformation = () => {
@@ -23,7 +27,7 @@ const ContactInformation = () => {
           Contact Information
         </h3>
         <p className="text-xs text-gray-400">
-          Address, Contact Number, and Email
+          Address, Contact Number, Email, and Map URL
         </p>
       </div>
 
@@ -34,6 +38,7 @@ const ContactInformation = () => {
             address: hasData ? storedData.address : "",
             phone: hasData ? storedData.phone : "",
             email: hasData ? storedData.email : "",
+            mapUrl: hasData ? storedData.mapUrl : "",
           }}
           validationSchema={schema}
           onSubmit={(values) => {
@@ -80,6 +85,20 @@ const ContactInformation = () => {
                 />
                 <ErrorMessage
                   name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+
+              {/* New Map URL Field */}
+              <div>
+                <label className="text-md font-medium">Map URL *</label>
+                <Field
+                  name="mapUrl"
+                  className="border px-4 py-2 rounded-md w-full"
+                />
+                <ErrorMessage
+                  name="mapUrl"
                   component="div"
                   className="text-red-500 text-sm"
                 />

@@ -98,7 +98,7 @@ export default function Items() {
         onClick={() => navigate("/details/add")}
         className="bg-linear-to-r from-[#0B0C28] to-cyan-400 mb-4 text-white px-5 py-2 rounded-lg cursor-pointer"
       >
-        Add Facility
+        Add Details
       </button>
 
       <div className="overflow-x-auto border border-gray-200 rounded-xl">

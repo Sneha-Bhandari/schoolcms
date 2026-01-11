@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
-  MdAdd,
   MdMoreVert,
   MdVisibility,
-  MdDelete,
   MdEdit,
+  MdDelete,
+  MdAdd,
 } from "react-icons/md";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -55,7 +55,7 @@ export default function TeamTable() {
     currentPage * itemsPerPage
   );
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
 
@@ -66,7 +66,6 @@ export default function TeamTable() {
   const selectedViewItem = teamData.find((t) => t.id === viewId);
   const selectedEditItem = teamData.find((t) => t.id === editId);
 
-  // Handle route params for view/edit
   useEffect(() => {
     if (!params.id) return;
     const id = parseInt(params.id);
@@ -74,21 +73,20 @@ export default function TeamTable() {
     if (window.location.pathname.includes("/team/edit")) setEditId(id);
   }, [params]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
-        dropdownOpen &&
+        open &&
         !e.target.closest(".dropdown-button") &&
         !e.target.closest(".dropdown-menu")
       ) {
-        setDropdownOpen(false);
+        setOpen(false);
         setSelectedId(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownOpen]);
+  }, [open]);
 
   const toggleDropdown = (e, id) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -97,13 +95,13 @@ export default function TeamTable() {
       left: rect.left - 100,
     });
     setSelectedId(id);
-    setDropdownOpen(true);
+    setOpen(true);
   };
 
   const handleDelete = (id) => {
     setTeamData((prev) => prev.filter((t) => t.id !== id));
     setConfirmDeleteId(null);
-    setDropdownOpen(false);
+    setOpen(false);
     setSelectedId(null);
     toast.success("Team member deleted successfully!");
   };
@@ -121,7 +119,7 @@ export default function TeamTable() {
 
       <button
         onClick={() => navigate("/team/add")}
-        className="bg-[#0B0C28] hover:bg-blue-700 mb-5 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2"
+        className="bg-linear-to-r from-[#0B0C28] to-cyan-400 mb-5 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2"
       >
         <MdAdd size={18} /> Add Team Member
       </button>
@@ -154,16 +152,15 @@ export default function TeamTable() {
                     {member.position}
                   </span>
                 </td>
-                <td className="py-3 px-2 flex gap-2 h-full mt-5   items-center justify-center">
-                  {member.facebooklink || member.instagramlink || member.linkedinlink ? (
-                    <>
-                      {member.facebooklink && <FaFacebookF />}
-                      {member.instagramlink && <FaInstagram />}
-                      {member.linkedinlink && <FaLinkedinIn />}
-                    </>
-                  ) : (
-                    <span className="text-gray-400">No links</span>
-                  )}
+                <td className="py-3 px-2 flex gap-2 h-full mt-5 items-center justify-center">
+                  {member.facebooklink && <FaFacebookF />}
+                  {member.instagramlink && <FaInstagram />}
+                  {member.linkedinlink && <FaLinkedinIn />}
+                  {!member.facebooklink &&
+                    !member.instagramlink &&
+                    !member.linkedinlink && (
+                      <span className="text-gray-400">No links</span>
+                    )}
                 </td>
                 <td className="py-3 px-2 relative">
                   <button
@@ -187,7 +184,7 @@ export default function TeamTable() {
         />
       )}
 
-      {dropdownOpen && selectedId && (
+      {open && selectedId && (
         <div
           className="dropdown-menu fixed z-50 w-32 bg-white border rounded-lg shadow"
           style={{ top: dropdownPos.top, left: dropdownPos.left }}

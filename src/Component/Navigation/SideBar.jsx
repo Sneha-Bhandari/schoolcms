@@ -14,6 +14,7 @@ import { TfiGallery } from "react-icons/tfi";
 import { MdOutlineChromeReaderMode } from "react-icons/md";
 import { LiaImages } from "react-icons/lia";
 import { HiAcademicCap } from "react-icons/hi";
+import { IoLogoBuffer } from "react-icons/io";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +27,7 @@ const SideBar = () => {
     { title: "About", path: "/about", icons: <MdOutlineDescription /> },
     { title: "Banner", path: "/banner", icons: <BsCardHeading /> },
     { title: "Contact", path: "/contact", icons: <LuContact /> },
+    { title: "Logos", path: "/logos", icons: <IoLogoBuffer /> },
 
   ];
 

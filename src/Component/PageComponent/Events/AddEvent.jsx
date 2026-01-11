@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FcEditImage } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
 import JoditEditor from "jodit-react";
+import { ImSpinner2 } from "react-icons/im";
 
 const EventSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -19,19 +20,35 @@ const EventSchema = Yup.object().shape({
 export default function AddEvent() {
   const navigate = useNavigate();
   const [previews, setPreviews] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (values, { resetForm }) => {
-    alert("Click Ok if you want to add event data")
-    console.log("New Event Data:", values);
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      setLoading(true);
 
-    toast.success("Event added successfully!");
-    resetForm();
-    setPreviews([]);
-    navigate("/events/eventlist");
+      console.log("New Event Data:", values);
+
+      await new Promise((res) => setTimeout(res, 1500));
+
+      toast.success("Event added successfully!", { duration: 3000 });
+
+      resetForm();
+      setPreviews([]);
+
+      setTimeout(() => {
+        navigate("/events/eventlist");
+      }, 500);
+    } catch (error) {
+      toast.error("Failed to add event!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="w-full py-8 px-4">
+      <Toaster position="top-right" />
+
       <div className="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">Add Event</h2>
@@ -196,10 +213,7 @@ export default function AddEvent() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2">
-                  Description *
-                </label>
-
+                <label className="text-sm font-medium mb-2">Description *</label>
                 <JoditEditor
                   value={values.description}
                   onBlur={(content) => setFieldValue("description", content)}
@@ -215,9 +229,21 @@ export default function AddEvent() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white px-4 py-3 rounded-xl"
+                  disabled={loading}
+                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white ${
+                    loading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-linear-to-r from-[#0B0C28] to-cyan-400"
+                  }`}
                 >
-                  Create Event
+                  {loading ? (
+                    <>
+                      <ImSpinner2 className="animate-spin text-lg" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Event"
+                  )}
                 </button>
 
                 <button

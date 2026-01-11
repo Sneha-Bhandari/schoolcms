@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FcEditImage } from "react-icons/fc";
-import { useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 
 const schema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -12,16 +12,19 @@ const schema = Yup.object().shape({
 
 const EventBanner = () => {
   const [storedData, setStoredData] = useState(null);
-  const hasData = Boolean(storedData);
+  const [loading, setLoading] = useState(false);
+
+  const isEdit = Boolean(storedData);
+
   const handleFileUpload = (file, setFieldValue) => {
     if (!file) return;
     setFieldValue("image", file);
   };
 
   return (
-    <div className="bg-white md:my-12 md:flex md:flex-row flex-col flex w-full mx-auto md:gap-4">
-      <div className="md:w-1/3 w-full mt-4 flex flex-col justify-center items-center md:items-start md:justify-start mx-auto">
-        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28] underline-offset-2 underline">
+    <div className="bg-white md:my-12 md:flex md:flex-row flex-col w-full mx-auto md:gap-4">
+      <div className="md:w-1/3 w-full mt-4 flex flex-col justify-start items-center md:items-start">
+        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28] underline">
         Event Banner Section
         </h3>
         <p className="text-xs text-gray-400">Image, Title, and Subtitle</p>
@@ -36,10 +39,26 @@ const EventBanner = () => {
             image: storedData?.image || null,
           }}
           validationSchema={schema}
-          onSubmit={(values) => {
-            setStoredData(values);
-            alert(hasData ? "Updated successfully!" : "Saved successfully!");
-            console.log("Event Banner Data:", values);
+          onSubmit={async (values, { resetForm }) => {
+            try {
+              setLoading(true);
+
+              await new Promise((resolve) => setTimeout(resolve, 1500));
+
+              setStoredData(values);
+              console.log("Event Banner Data:", values);
+              toast.success(
+                isEdit
+                  ? "Event Banner updated successfully!"
+                  : "Event Banner created successfully!"
+              );
+
+              if (!isEdit) resetForm();
+            } catch (err) {
+              toast.error("Something went wrong!");
+            } finally {
+              setLoading(false);
+            }
           }}
         >
           {({ values, setFieldValue }) => (
@@ -53,8 +72,12 @@ const EventBanner = () => {
                 >
                   {values.image ? (
                     <img
-                      src={URL.createObjectURL(values.image)}
-                      className="h-full w-full object-cover"
+                      src={
+                        values.image instanceof File
+                          ? URL.createObjectURL(values.image)
+                          : values.image
+                      }
+                      className="h-full w-full object-contain"
                       alt="preview"
                     />
                   ) : (
@@ -71,8 +94,9 @@ const EventBanner = () => {
                     handleFileUpload(e.target.files[0], setFieldValue)
                   }
                 />
+
                 <ErrorMessage
-                  name="imageid"
+                  name="image"
                   component="div"
                   className="text-red-500 text-sm"
                 />
@@ -106,9 +130,19 @@ const EventBanner = () => {
 
               <button
                 type="submit"
-                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 font-semibold  text-white py-2.5 px-4 w-fit rounded-xl cursor-pointer "
+                disabled={loading}
+                className={`flex items-center gap-2 bg-linear-to-r from-[#0B0C28] to-cyan-400 
+                font-semibold text-white py-2.5 px-6 rounded-xl w-fit transition
+                ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
               >
-                {hasData ? "Update Event Banner" : "Create Event Banner"}
+                {loading && (
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                )}
+                {loading
+                  ? "Please wait..."
+                  : isEdit
+                  ? "Update Event Banner"
+                  : "Create Event Banner"}
               </button>
             </Form>
           )}
@@ -117,4 +151,5 @@ const EventBanner = () => {
     </div>
   );
 };
+
 export default EventBanner;

@@ -4,8 +4,11 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
+import { ImSpinner2 } from "react-icons/im";
+import { Toaster } from "react-hot-toast";
 
 const BlogSchema = Yup.object().shape({
+  image: Yup.mixed().required("Required"),
   title: Yup.string().required("Title is required"),
   category: Yup.string().required("Category is required"),
   date: Yup.string().required("Date is required"),
@@ -19,19 +22,42 @@ export default function EditBlog({ item, onClose, onUpdate }) {
 
   if (!item) return null;
 
-  const handleSubmit = (values) => {
-    const updatedBlog = { ...item, ...values, image };
-    alert("Click OK to save edited blog");
-    console.log("Edited Blog Data 👉", updatedBlog);
-    onUpdate(updatedBlog);
-    toast.success("Blog updated successfully!");
-    onClose();
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+  
+      const updatedBlog = { ...item, ...values, image };
+      console.log("Edited Blog Data ", updatedBlog);
+  
+      await new Promise((res) => setTimeout(res, 1200));
+  
+      toast.success("Blog updated successfully!", {
+        duration: 3000,
+        style: { zIndex: 99999 },
+      });
+  
+      setTimeout(() => {
+        onUpdate(updatedBlog);
+        onClose();
+      }, 500);
+    } catch (error) {
+      toast.error("Failed to update blog", { style: { zIndex: 99999 } });
+    } finally {
+      setLoading(false);
+    }
   };
+  
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 h-full">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+        }}
+      />
       <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto h-11/12 overflow-scroll">
-
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">Edit Blog</h2>
           <button
@@ -46,6 +72,7 @@ export default function EditBlog({ item, onClose, onUpdate }) {
           initialValues={{
             title: item.title,
             category: item.category,
+            image:item.image,
             date: item.date,
             supervisor: item.supervisor,
             venue: item.venue,
@@ -56,9 +83,10 @@ export default function EditBlog({ item, onClose, onUpdate }) {
         >
           {({ values, setFieldValue }) => (
             <Form className="space-y-6">
-
               <div>
-                <label className="block text-sm font-medium mb-2">Blog Image</label>
+                <label className="block text-sm font-medium mb-2">
+                  Blog Image
+                </label>
                 <label
                   htmlFor="edit-blog-image"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-48 flex items-center justify-center rounded-md overflow-hidden"
@@ -67,7 +95,7 @@ export default function EditBlog({ item, onClose, onUpdate }) {
                     <img
                       src={image}
                       alt="Blog"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <FcEditImage className="text-5xl text-gray-300" />
@@ -92,7 +120,11 @@ export default function EditBlog({ item, onClose, onUpdate }) {
                   className="w-full border rounded-lg px-4 py-3"
                   name="title"
                 />
-                <ErrorMessage name="title" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="title"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -103,7 +135,7 @@ export default function EditBlog({ item, onClose, onUpdate }) {
                     name="category"
                     className="w-full border rounded-lg px-4 py-3"
                   >
-                   <option value="">Select</option>
+                    <option value="">Select</option>
                     <option value="Sports">Sports</option>
                     <option value="Cultural">Cultural</option>
                     <option value="Cultural">Technology</option>
@@ -139,7 +171,9 @@ export default function EditBlog({ item, onClose, onUpdate }) {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2">Description *</label>
+                <label className="text-sm font-medium mb-2">
+                  Description *
+                </label>
                 <JoditEditor
                   value={values.description}
                   onBlur={(content) => setFieldValue("description", content)}
@@ -147,12 +181,25 @@ export default function EditBlog({ item, onClose, onUpdate }) {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button
-                  type="submit"
-                  className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white px-4 py-3 rounded-xl"
-                >
-                  Update Blog
-                </button>
+              <button
+  type="submit"
+  disabled={loading}
+  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white
+    ${loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-linear-to-r from-[#0B0C28] to-cyan-400"
+    }`}
+>
+  {loading ? (
+    <>
+      <ImSpinner2 className="animate-spin text-lg" />
+      Updating...
+    </>
+  ) : (
+    "Update Blog"
+  )}
+</button>
+
                 <button
                   type="button"
                   onClick={onClose}
@@ -161,7 +208,6 @@ export default function EditBlog({ item, onClose, onUpdate }) {
                   Cancel
                 </button>
               </div>
-
             </Form>
           )}
         </Formik>

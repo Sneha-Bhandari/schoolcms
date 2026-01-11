@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FcEditImage } from "react-icons/fc";
+import { ImSpinner2 } from "react-icons/im";
 
 const TeamSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -11,53 +12,57 @@ const TeamSchema = Yup.object().shape({
   facebooklink: Yup.string().url("Must be a valid URL").nullable(),
   instagramlink: Yup.string().url("Must be a valid URL").nullable(),
   linkedinlink: Yup.string().url("Must be a valid URL").nullable(),
+  image: Yup.mixed().required("Profile image is required"),
 });
 
 export default function AddTeam() {
   const navigate = useNavigate();
-  const [image, setImage] = useState(null);
+  const [load, setLoad] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [image, setImage] = useState(null);
 
-  const handleSubmit = (values, { resetForm }) => {
-    alert("Click Ok if you want to add event data")
-    console.log("New Event Data:", values);
-    setPreview();
-    toast.success("Event added successfully!");
-      resetForm();
-      navigate("/team");
-
+  const handleSubmit = async (values, { resetForm }) => {
     if (!image) {
       toast.error("Please upload an image");
       return;
     }
-    // const handleSubmit = (values, { resetForm }) => {
-    //   alert("Click Ok if you want to add event data")
-    //   console.log("New Event Data:", values);
-  
-    //   toast.success("Event added successfully!");
-    //   resetForm();
-     
-    //   navigate("/events/eventlist");
-    // };
-  
-    const newMember = {
-      id: Date.now(),
-      ...values,
-      image: preview, 
-    };
 
-    const existing = JSON.parse(localStorage.getItem("teamData")) || [];
-    localStorage.setItem("teamData", JSON.stringify([...existing, newMember]));
+    setLoad(true);
+    console.log("New Team Member Data", values); 
 
-    toast.success("Team member added successfully!");
-    resetForm();
-    setImage(null);
-    setPreview(null);
-    navigate("/team");
+
+    try {
+      // Simulate API delay
+      await new Promise((res) => setTimeout(res, 1500));
+
+      const newMember = {
+        id: Date.now(),
+        ...values,
+        image: preview,
+      };
+
+      // Save to localStorage (demo purpose)
+      const existing = JSON.parse(localStorage.getItem("teamData")) || [];
+      localStorage.setItem("teamData", JSON.stringify([...existing, newMember]));
+
+      toast.success("Team member added successfully!");
+
+      resetForm();
+      setPreview(null);
+      setImage(null);
+
+      // Navigate after delay for better UX
+      setTimeout(() => navigate("/team"), 1000);
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      setLoad(false);
+    }
   };
 
   return (
     <div className="w-full py-8 px-4">
+      <Toaster position="top-right" />
       <div className="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">Add Team Member</h2>
@@ -76,6 +81,7 @@ export default function AddTeam() {
             facebooklink: "",
             instagramlink: "",
             linkedinlink: "",
+            image: null,
           }}
           validationSchema={TeamSchema}
           onSubmit={handleSubmit}
@@ -111,9 +117,15 @@ export default function AddTeam() {
                       if (!file) return;
                       setImage(file);
                       setPreview(URL.createObjectURL(file));
+                      setFieldValue("image", file);
                     }}
                   />
                 </label>
+                <ErrorMessage
+                  name="image"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               {/* Name & Position */}
@@ -147,30 +159,61 @@ export default function AddTeam() {
 
               {/* Social Links */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Field
-                  name="facebooklink"
-                  placeholder="Facebook URL"
-                  className="border rounded-lg px-4 py-3"
-                />
-                <Field
-                  name="instagramlink"
-                  placeholder="Instagram URL"
-                  className="border rounded-lg px-4 py-3"
-                />
-                <Field
-                  name="linkedinlink"
-                  placeholder="LinkedIn URL"
-                  className="border rounded-lg px-4 py-3"
-                />
+                <div>
+                  <Field
+                    name="facebooklink"
+                    placeholder="Facebook URL"
+                    className="border rounded-lg px-4 py-3 w-full"
+                  />
+                  <ErrorMessage
+                    name="facebooklink"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <Field
+                    name="instagramlink"
+                    placeholder="Instagram URL"
+                    className="border rounded-lg px-4 py-3 w-full"
+                  />
+                  <ErrorMessage
+                    name="instagramlink"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <Field
+                    name="linkedinlink"
+                    placeholder="LinkedIn URL"
+                    className="border rounded-lg px-4 py-3 w-full"
+                  />
+                  <ErrorMessage
+                    name="linkedinlink"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
               </div>
 
               {/* Buttons */}
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white px-6 py-3 rounded-xl"
+                  disabled={load}
+                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white
+                  ${load ? "bg-gray-400 cursor-not-allowed" : "bg-linear-to-r from-[#0B0C28] to-cyan-400"}`}
                 >
-                  Add Team Member
+                  {load ? (
+                    <>
+                      <ImSpinner2 className="animate-spin text-lg" /> Loading...
+                    </>
+                  ) : (
+                    "Add Team Member"
+                  )}
                 </button>
                 <button
                   type="button"
