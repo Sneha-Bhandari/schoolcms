@@ -81,13 +81,13 @@ const SideBar = () => {
           <h1 className="text-base font-semibold uppercase tracking-wide">Pages</h1>
         </div>
 
-        <ul className="mx-2">
+        <ul className="">
           {navitems.map((item, index) => (
             <li key={index} className="w-full ">
               <Link
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-6 py-3 rounded-sm font-bold transition-all duration-500 ${isActive(item.path)}`}
+                className={`flex items-center gap-3 px-6 py-3 font-bold transition-all duration-500 hover:bg-linear-to-r from-[#0B0C10] to-cyan-100 hover:text-white ${isActive(item.path)}`}
               >
                 {item.icons}
                 <span className="font-semibold text-md">{item.title}</span>
@@ -167,13 +167,13 @@ const SideBar = () => {
           )}
         </div>
 
-        <ul className="mx-2 mb-26 ">
+        <ul className=" mb-26 ">
           {nextnav.map((item, index) => (
             <li key={index} className="w-full">
               <Link
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-3 py-3 rounded-sm transition-all duration-500   ${isActive(item.path)}`}
+                className={`flex items-center gap-3 px-5 py-3  transition-all duration-500 hover:bg-linear-to-r from-[#0B0C10] to-cyan-200 hover:text-white  ${isActive(item.path)}`}
               >
                 {item.icons}
                 <span className="text-md font-semibold">{item.title}</span>

@@ -1,31 +1,85 @@
-import React, { useState } from "react";
+import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+import useGetData from "../../../lib/useGetData";
+import usePostData from "../../../lib/usePostData";
+import usePatchData from "../../../lib/usePatchData";
 
 const schema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   subtitle: Yup.string().required("Subtitle is required"),
   description: Yup.string().required("Description is required"),
-  image: Yup.mixed().required("Image is required"),
   features: Yup.array()
     .of(Yup.string().required("Feature cannot be empty"))
     .min(1, "Add at least one feature"),
+  imageid: Yup.number().required("Image is required"),
 });
 
 const WhyChooseUs = () => {
-  const [storedData, setStoredData] = useState(null);
-  const hasData = Boolean(storedData);
+  const { data, loading, error, refetch } = useGetData("whychooseus");
 
-  const handleFileUpload = (file, setFieldValue) => {
-    setFieldValue("image", file);
+  const { postData } = usePostData("whychooseus");
+  const { patchData } = usePatchData("whychooseus");
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading data</p>;
+
+  const item = Array.isArray(data) ? data[0] : data;
+  const hasData = Boolean(item?.id);
+
+  const uploadImage = async (file, setFieldValue) => {
+    try {
+      const formData = new FormData();
+      formData.append("images", file);
+
+      const res = await axios.post(
+        "http://192.168.1.67:3000/fileupload/upload",
+        formData
+      );
+
+      setFieldValue("imageid", res.data.id);
+      setFieldValue("imageUrl", res.data.imageurl);
+    } catch (err) {
+      console.error(err);
+      toast.error("Image upload failed");
+    }
+  };
+
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      const payload = {
+        title: values.title,
+        subtitle: values.subtitle,
+        description: values.description,
+        features: values.features,
+        imageid: values.imageid,
+      };
+
+      if (hasData) {
+        await patchData(item.id, payload);
+        toast.success("Updated successfully");
+      } else {
+        await postData(payload);
+        toast.success("Created successfully");
+      }
+
+      refetch();
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      toast.error("Operation failed");
+    }
   };
 
   return (
-    <div className="bg-white md:my-12 md:flex md:flex-row flex-col flex w-full mx-auto md:gap-4">
-      <div className="md:w-1/4 w-full mt-4 flex flex-col justify-center items-center md:items-start md:justify-start mx-auto">
-        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28] underline-offset-2">
+    <div className="bg-white my-12 flex w-full mx-auto gap-6">
+      <div className="w-1/4">
+        <h3 className="text-2xl font-semibold text-[#0B0C28]">
           Why Choose Us
         </h3>
         <p className="text-xs text-gray-400">
@@ -33,43 +87,38 @@ const WhyChooseUs = () => {
         </p>
       </div>
 
-      <div className="md:w-10/16 w-full">
+      <div className="w-3/4">
         <Formik
           enableReinitialize
           initialValues={{
-            title: storedData?.title || "",
-            subtitle: storedData?.subtitle || "",
-            description: storedData?.description || "",
-            image: storedData?.image || null,
-            features: storedData?.features || [""],
+            title: item?.title || "",
+            subtitle: item?.subtitle || "",
+            description: item?.description || "",
+            features: item?.features || [""],
+            imageid: item?.imageid?.id || "",
+            imageUrl: item?.imageid?.imageurl || "",
           }}
           validationSchema={schema}
-          onSubmit={(values) => {
-            setStoredData(values);
-            alert(hasData ? "Updated successfully!" : "Saved successfully!");
-            console.log("Why Choose Us Data:", values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({ values, setFieldValue }) => (
-            <Form className="flex flex-col gap-4 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
-              <div className="flex flex-col gap-2">
-                <label className="text-md font-medium">Image *</label>
-
+            <Form className="flex flex-col gap-5 shadow-xl p-10 rounded-xl">
+              <div>
+                <label className="font-medium">Image *</label>
                 <label
                   htmlFor="whychooseus-image"
-                  className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
+                  className="cursor-pointer border-2 border-dashed border-blue-900 h-40 flex justify-center items-center rounded-md"
                 >
-                  {values.image ? (
+                  {values.imageUrl ? (
                     <img
-                      src={URL.createObjectURL(values.image)}
-                      className="h-full object-cover w-full"
+                      src={values.imageUrl}
+                      className="h-full w-full object-cover"
                       alt="preview"
                     />
                   ) : (
-                    <FcEditImage className="text-gray-300 text-5xl" />
+                    <FcEditImage className="text-5xl text-gray-300" />
                   )}
                 </label>
-
                 <input
                   id="whychooseus-image"
                   type="file"
@@ -77,94 +126,86 @@ const WhyChooseUs = () => {
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files[0];
-                    if (!file) return;
-                    handleFileUpload(file, setFieldValue);
+                    if (file) uploadImage(file, setFieldValue);
                   }}
                 />
-
                 <ErrorMessage
-                  name="image"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="text-md font-medium">Title *</label>
-                <Field
-                  name="title"
-                  className="border-2 border-blue-900 px-4 py-2 rounded-md w-full"
-                />
-                <ErrorMessage
-                  name="title"
+                  name="imageid"
                   component="div"
                   className="text-red-500 text-sm"
                 />
               </div>
 
               <div>
-                <label className="text-md font-medium">Subtitle *</label>
+                <label>Title *</label>
                 <Field
-                  name="subtitle"
-                  className="border-2 border-blue-900 px-4 py-2 rounded-md w-full"
+                  name="title"
+                  className="border px-4 py-2 rounded-md w-full"
                 />
                 <ErrorMessage
-                  name="subtitle"
+                  name="title"
                   component="div"
-                  className="text-red-500 text-sm"
+                  className="text-red-500"
                 />
               </div>
 
               <div>
-                <label className="text-md font-medium">Description  *</label>
+                <label>Subtitle *</label>
+                <Field
+                  name="subtitle"
+                  className="border px-4 py-2 rounded-md w-full"
+                />
+                <ErrorMessage
+                  name="subtitle"
+                  component="div"
+                  className="text-red-500"
+                />
+              </div>
+
+              <div>
+                <label>Description *</label>
                 <JoditEditor
                   value={values.description}
-                  onBlur={(content) => setFieldValue("description", content)}
-                  onChange={() => {}}
-                  config={{
-                    readonly: false,
-                    minHeight: 250,
-                    spellcheck: false,
-                  }}
+                  onBlur={(content) =>
+                    setFieldValue("description", content)
+                  }
                 />
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="text-red-500 text-sm mt-1"
+                  className="text-red-500 mt-1"
                 />
               </div>
 
               <div>
-                <label className="text-md font-medium">Features *</label>
-
-                {values.features.map((feature, index) => (
-                  <div key={index} className="flex gap-3 mb-2">
+                <label>Features *</label>
+                {values.features.map((_, i) => (
+                  <div key={i} className="flex gap-2 mb-2">
                     <Field
-                      name={`features[${index}]`}
-                      placeholder={`Feature ${index + 1}`}
-                      className="border-2 border-blue-900 px-4 py-2 rounded-md w-full bg-white"
+                      name={`features[${i}]`}
+                      className="border px-3 py-2 rounded-md w-full"
                     />
                     <button
                       type="button"
-                      className="px-2 border rounded-md bg-red-600 hover:bg-red-500 text-white"
-                      onClick={() => {
-                        const copy = [...values.features];
-                        copy.splice(index, 1);
-                        setFieldValue("features", copy);
-                      }}
                       disabled={values.features.length === 1}
+                      onClick={() =>
+                        setFieldValue(
+                          "features",
+                          values.features.filter((_, x) => x !== i)
+                        )
+                      }
+                      className="bg-red-600 text-white px-2 rounded"
                     >
                       ✕
                     </button>
                   </div>
                 ))}
-
                 <button
                   type="button"
-                  className="text-sm px-3 py-2 border rounded-md hover:bg-blue-500 hover:text-white"
                   onClick={() =>
                     setFieldValue("features", [...values.features, ""])
                   }
+                  className="text-sm border px-3 py-2 rounded"
                 >
                   + Add Feature
                 </button>
@@ -172,7 +213,8 @@ const WhyChooseUs = () => {
 
               <button
                 type="submit"
-                className="bg-[#0B0C28] font-semibold bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-4 w-fit rounded-xl"
+                disabled={!values.imageid}
+                className="bg-[#0B0C28] text-white px-6 py-2 rounded-xl"
               >
                 {hasData ? "Update Section" : "Create Section"}
               </button>

@@ -1,28 +1,27 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./HOC/Layout";
-// import BlogsTable from "./pages/blogs/BlogsTable";
+
+import Login from "../src/Auth/Login";
+import ProtectedRoute from "../src/Auth/ProtectedRoute";
+
 import Home from "./Pages/Home";
 import About from "./Pages/About";
 import VisionAndMission from "./Pages/VisionAndMission";
 import HeroSection from "./Pages/HeroSection";
-import Details from "./Pages/Details";
 import Banner from "./Pages/Banner";
 import OurFacilities from "./Pages/OurFacilities";
-/* Team */
+
 import TeamTable from "./Component/PageComponent/Team/TeamTable";
 import AddTeam from "./Component/PageComponent/Team/AddTeam";
 
-/* Events */
 import EventTopSection from "./Component/PageComponent/Events/EventTopSection";
 import EventsTable from "./Component/PageComponent/Events/EventsTable";
 import AddEvent from "./Component/PageComponent/Events/AddEvent";
 
-/* Testimonials */
 import TestimonialComponent from "./Component/PageComponent/Testimonial/TestimonialComponent";
 import AddStudentForm from "./Component/PageComponent/Testimonial/AddStudentForm";
 
-// Blogs
 import BlogsTable from "./Component/PageComponent/Blogs/BlogsTable";
 import BlogTopSection from "./Component/PageComponent/Blogs/BlogTopSection";
 import FaqTable from "./Component/PageComponent/FAQ/FAQTable";
@@ -37,6 +36,7 @@ import OurAcademicProgram from "./Pages/OurAcademicProgram";
 import AddAcademicProgram from "./Component/PageComponent/OurAcademicProgram/AddAcademicProgram";
 import Items from "./Component/PageComponent/Details/Items";
 import AddItems from "./Component/PageComponent/Details/Additems";
+
 import { Toaster } from "react-hot-toast";
 import Logos from "./Pages/Logos";
 
@@ -44,12 +44,18 @@ function App() {
   return (
     <>
       <Routes>
-        <Route element={<Layout />}>
+
+        {/* ===== LOGIN ROUTE ===== */}
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          element={<ProtectedRoute>  <Layout /></ProtectedRoute>}>
           {/* Home */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/banner" element={<Banner />} />
           <Route path="/gallery" element={<Gallery />} />
+
           {/* Team */}
           <Route path="/team" element={<TeamTable />} />
           <Route path="/team/add" element={<AddTeam />} />
@@ -59,7 +65,7 @@ function App() {
           {/* CMS Pages */}
           <Route path="/VisionAndMission" element={<VisionAndMission />} />
           <Route path="/HeroSection" element={<HeroSection />} />
-          <Route path="/Logos" element={<Logos/>} />
+          <Route path="/Logos" element={<Logos />} />
 
           {/* Details Page */}
           <Route path="/details" element={<Items />} />
@@ -130,7 +136,8 @@ function App() {
           />
         </Route>
       </Routes>
-      <Toaster />
+
+      <Toaster position="top-right" />
     </>
   );
 }

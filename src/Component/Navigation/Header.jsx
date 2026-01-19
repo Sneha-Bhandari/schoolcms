@@ -2,6 +2,10 @@ import React from "react";
 import { MdTransitEnterexit, MdSchool } from "react-icons/md";
 import image from "../../assets/Photo/logos.png"
 const Header = () => {
+  const logout = () => {
+    localStorage.removeItem("isAuth");
+    window.location.href = "/login";
+  };
   return (
     <div className="fixed top-0 left-0 w-full shadow-2xl bg-white h-18 flex items-center justify-between px-4 sm:px-6 md:px-12 z-50">
       <div className="flex items-center">
@@ -15,6 +19,13 @@ const Header = () => {
         
         <div className="flex text-xl font-serif gap-1 items-center hover:text-gray-600 cursor-pointer transition-colors duration-700 ease-in-out">
           Global School <MdSchool className="text-base sm:text-lg md:text-xl" />
+          <button
+  onClick={logout}
+  className="bg-red-500 text-white px-3 py-1 rounded"
+>
+  Logout
+</button>
+
         </div>
       </div>
    

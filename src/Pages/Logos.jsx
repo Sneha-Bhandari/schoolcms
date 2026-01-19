@@ -1,12 +1,13 @@
 import React from 'react'
-import NavbarLogo from '../Component/PageComponent/Logo/NavbarLogo'
-import FooterLogo from '../Component/PageComponent/Logo/FooterLogo'
+import LogoNavbar from '../Component/PageComponent/Logo/LogoNavbar'
+import LogoFooter from '../Component/PageComponent/Logo/LogoFooter'
 
 const Logos = () => {
   return (
-    <div>
-      <NavbarLogo/>
-      <FooterLogo/>
+    <div className='my-6'>
+     <LogoNavbar/>
+     <LogoFooter/>
+     
     </div>
   )
 }
