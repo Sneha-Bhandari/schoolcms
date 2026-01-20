@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FcEditImage } from "react-icons/fc";
@@ -17,92 +17,84 @@ const schema = Yup.object().shape({
   features: Yup.array()
     .of(Yup.string().required("Feature cannot be empty"))
     .min(1, "Add at least one feature"),
-  imageid: Yup.number().required("Image is required"),
+  imageid: Yup.string().required("Image is required"),
 });
 
 const WhyChooseUs = () => {
   const { data, loading, error, refetch } = useGetData("whychooseus");
+  const { post, loading: posting } = usePostData();
+  const { patch, loading: patching } = usePatchData();
 
-  const { postData } = usePostData("whychooseus");
-  const { patchData } = usePatchData("whychooseus");
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading data</p>;
+  const initialItem = data && data.length > 0 ? data[0] : null;
 
-  const item = Array.isArray(data) ? data[0] : data;
-  const hasData = Boolean(item?.id);
-
-  const uploadImage = async (file, setFieldValue) => {
+  const fileUpload = async (file, setFieldValue) => {
     try {
       const formData = new FormData();
       formData.append("images", file);
 
       const res = await axios.post(
-        "http://192.168.1.67:3000/fileupload/upload",
+        "http://192.168.1.67:8000/fileuploads/upload",
         formData
       );
-
       setFieldValue("imageid", res.data.id);
-      setFieldValue("imageUrl", res.data.imageurl);
+      setFieldValue("imageUrl", res.data.imageUrl);
     } catch (err) {
       console.error(err);
-      toast.error("Image upload failed");
+      toast.error("Image upload failed!");
     }
   };
 
-  const handleSubmit = async (values, { resetForm }) => {
-    try {
-      const payload = {
-        title: values.title,
-        subtitle: values.subtitle,
-        description: values.description,
-        features: values.features,
-        imageid: values.imageid,
-      };
-
-      if (hasData) {
-        await patchData(item.id, payload);
-        toast.success("Updated successfully");
-      } else {
-        await postData(payload);
-        toast.success("Created successfully");
-      }
-
-      refetch();
-      resetForm();
-    } catch (err) {
-      console.error(err);
-      toast.error("Operation failed");
-    }
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className="bg-white my-12 flex w-full mx-auto gap-6">
+      {/* Left Panel */}
       <div className="w-1/4">
-        <h3 className="text-2xl font-semibold text-[#0B0C28]">
-          Why Choose Us
-        </h3>
+        <h3 className="text-2xl font-semibold text-[#0B0C28]">Why Choose Us</h3>
         <p className="text-xs text-gray-400">
           Image, Title, Subtitle, Description and Features
         </p>
       </div>
 
+      {/* Form */}
       <div className="w-3/4">
         <Formik
           enableReinitialize
           initialValues={{
-            title: item?.title || "",
-            subtitle: item?.subtitle || "",
-            description: item?.description || "",
-            features: item?.features || [""],
-            imageid: item?.imageid?.id || "",
-            imageUrl: item?.imageid?.imageurl || "",
+            title: initialItem?.title || "",
+            subtitle: initialItem?.subtitle || "",
+            description: initialItem?.description || "",
+            features: Array.isArray(initialItem?.features)
+              ? initialItem.features : [""],
+            imageid:
+              initialItem?.imageid?.id ||   "",
+            imageUrl:
+              initialItem?.imageid?.imageUrl ||"",
           }}
           validationSchema={schema}
-          onSubmit={handleSubmit}
+          onSubmit={(values, { resetForm }) => {
+            if (initialItem) {
+              patch("whychooseus", initialItem.id, values, () => {
+                toast.success("Data has been updated");
+                refetch();
+                resetForm();
+              });
+            } else {
+              post("whychooseus", values, () => {
+                toast.success("Data has been added");
+                refetch();
+                resetForm();
+              });
+            }
+          }}
+
+
         >
-          {({ values, setFieldValue }) => (
+          {({ values, setFieldValue, isSubmitting }) => (
             <Form className="flex flex-col gap-5 shadow-xl p-10 rounded-xl">
+              {/* IMAGE */}
               <div>
                 <label className="font-medium">Image *</label>
                 <label
@@ -112,7 +104,7 @@ const WhyChooseUs = () => {
                   {values.imageUrl ? (
                     <img
                       src={values.imageUrl}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                       alt="preview"
                     />
                   ) : (
@@ -126,7 +118,7 @@ const WhyChooseUs = () => {
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files[0];
-                    if (file) uploadImage(file, setFieldValue);
+                    if (file) fileUpload(file, setFieldValue);
                   }}
                 />
                 <ErrorMessage
@@ -136,6 +128,7 @@ const WhyChooseUs = () => {
                 />
               </div>
 
+              {/* TITLE */}
               <div>
                 <label>Title *</label>
                 <Field
@@ -149,6 +142,7 @@ const WhyChooseUs = () => {
                 />
               </div>
 
+              {/* SUBTITLE */}
               <div>
                 <label>Subtitle *</label>
                 <Field
@@ -162,6 +156,7 @@ const WhyChooseUs = () => {
                 />
               </div>
 
+              {/* DESCRIPTION */}
               <div>
                 <label>Description *</label>
                 <JoditEditor
@@ -177,6 +172,7 @@ const WhyChooseUs = () => {
                 />
               </div>
 
+              {/* FEATURES */}
               <div>
                 <label>Features *</label>
                 {values.features.map((_, i) => (
@@ -211,12 +207,13 @@ const WhyChooseUs = () => {
                 </button>
               </div>
 
+              {/* SUBMIT */}
               <button
                 type="submit"
-                disabled={!values.imageid}
+                disabled={patching || posting}
                 className="bg-[#0B0C28] text-white px-6 py-2 rounded-xl"
               >
-                {hasData ? "Update Section" : "Create Section"}
+                {patching || posting ? "Saving..." : initialItem ? "Update" : "Submit"}
               </button>
             </Form>
           )}

@@ -1,29 +1,40 @@
-import { useState, useCallback } from "react";
+// Lib/DeleteData.js or Lib/useDeleteData.js
+import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-const useDeleteData = (url) => {
+const useDeleteData = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [response, setResponse] = useState(null);
 
-  const deleteData = useCallback(async (id) => {
-    if (!url || !id) return;
-
+  const deleteData = (url) => {
     setLoading(true);
     setError(null);
+    setResponse(null);
 
     try {
-      await axios.delete(`http://192.168.1.67:3000/${url}/${id}/`);
-      return true;
+      axios
+        .delete(`http://192.168.1.67:8000/${url}`)
+        .then((res) => {
+          setResponse(res.data);
+          toast.error('data has been deleted')
+        })
+        .catch((err) => {
+          console.error("DELETE error:", err);
+          setError(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } catch (err) {
-      console.error("DELETE error:", err);
+      console.error("Unexpected DELETE error:", err);
       setError(err);
-      throw err;
-    } finally {
       setLoading(false);
     }
-  }, [url]);
+  };
 
-  return { deleteData, loading, error };
+  return { deleteData, loading, error, response };
 };
 
 export default useDeleteData;

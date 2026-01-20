@@ -1,26 +1,48 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.67:3000";
+const usePostData = () => {
+  const [load, setLoading] = useState(false);
+  const [err, setError] = useState(null);
+  const [response, setResponse] = useState(null);
 
-const usePostData = (url) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const post = (url, payload, reset) => {
+    setLoading(true);
+    setError(null);
+    setResponse(null);
 
-  const postData = useCallback(async (payload) => {
     try {
-      setLoading(true);
-      const res = await axios.post(`${BASE_URL}/${url}/`, payload);
-      return res.data;
-    } catch (err) {
-      setError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [url]);
+      axios
+        .post(`http://192.168.1.67:8000/${url}/`, payload)
+        .then((res) => {
+          setResponse(res.data);
+          setTimeout(() => {
 
-  return { postData, loading, error };
+            reset()
+          }, 200);
+          // toast.success("Milestone has been added successfully||")
+        })
+        .catch((err) => {
+          console.error("Axios POST error:", err);
+          setError(err);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setLoading(false);
+          }, 200);
+        });
+    } catch (err) {
+      // catches synchronous errors (not Axios .catch)
+      console.error("Unexpected POST error:", err);
+      setTimeout(() => {
+        setError(err);
+        setLoading(false);
+      }, 200);
+
+    }
+  };
+
+  return { post, load, err, response };
 };
 
 export default usePostData;

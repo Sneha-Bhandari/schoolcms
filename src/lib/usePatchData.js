@@ -1,26 +1,45 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.67:3000";
+const usePatchData = () => {
+    const [load, setLoading] = useState(false);
+    const [err, setError] = useState(null);
+    const [response, setResponse] = useState(null);
 
-const usePatchData = (url) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+    const patch = (url, id, payload, reset) => {
+        setLoading(true);
+        setError(null);
+        setResponse(null);
 
-  const patchData = useCallback(async (id, payload) => {
-    try {
-      setLoading(true);
-      const res = await axios.patch(`${BASE_URL}/${url}/${id}/`, payload);
-      return res.data;
-    } catch (err) {
-      setError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [url]);
+        try {
+            axios
+                .patch(`http://192.168.1.67:8000/${url}/${id}/`, payload)
+                .then((res) => {
+                    setResponse(res.data);
+                    setTimeout(() => {
+                        if (reset) reset();
+                    }, 200);
+                    // toast.success("Data has been updated successfully!")
+                })
+                .catch((err) => {
+                    console.error("Axios PATCH error:", err);
+                    setError(err);
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 200);
+                });
+        } catch (err) {
+            console.error("Unexpected PATCH error:", err);
+            setTimeout(() => {
+                setError(err);
+                setLoading(false);
+            }, 200);
+        }
+    };
 
-  return { patchData, loading, error };
+    return { patch, load, err, response };
 };
 
 export default usePatchData;
