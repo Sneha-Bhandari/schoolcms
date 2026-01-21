@@ -34,7 +34,7 @@ const WhyChooseUs = () => {
       formData.append("images", file);
 
       const res = await axios.post(
-        "http://192.168.1.67:8000/fileuploads/upload",
+        "http://192.168.1.89:8000/fileuploads/upload",
         formData
       );
       setFieldValue("imageid", res.data.id);
@@ -45,7 +45,7 @@ const WhyChooseUs = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading Why Choose us Section...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   return (

@@ -16,7 +16,7 @@ const useGetData = (url) => {
 
         try {
             axios
-                .get(`http://192.168.1.67:8000/${url}/`)
+                .get(`http://192.168.1.89:8000/${url}/`)
                 .then((response) => {
                     setData(response.data);
                 })

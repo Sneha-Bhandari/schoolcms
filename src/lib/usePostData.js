@@ -13,7 +13,7 @@ const usePostData = () => {
 
     try {
       axios
-        .post(`http://192.168.1.67:8000/${url}/`, payload)
+        .post(`http://192.168.1.89:8000/${url}/`, payload)
         .then((res) => {
           setResponse(res.data);
           setTimeout(() => {

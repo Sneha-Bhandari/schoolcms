@@ -1,39 +1,57 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FcEditImage } from "react-icons/fc";
 import JoditEditor from "jodit-react";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+import useGetData from "../../../lib/useGetData";
+import usePostData from "../../../lib/usePostData";
+import usePatchData from "../../../lib/usePatchData";
 
 const schema = Yup.object().shape({
-  image: Yup.string().required("Image is required"),
+  imageid: Yup.string().required("Image is required"),
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
-
-  stats: Yup.array()
-    .of(
-      Yup.object().shape({
-        value: Yup.string().required("Required"),
-        label: Yup.string().required("Required"),
-      })
-    )
-    .min(1, "Add at least one achievement")
-    .max(4, "Maximum 4 achievements allowed"),
+  value: Yup.string().required("Required"),
+  label: Yup.string().required("Required"),
 });
 
 const AboutSchool = () => {
   const editor = useRef(null);
-  const [storedData, setStoredData] = useState(null);
 
-  const hasData = Boolean(storedData);
+  const { data, loading, error, refetch } = useGetData("aboutschoolsection");
+  const { post, loading: posting } = usePostData();
+  const { patch, loading: patching } = usePatchData();
 
-  const fileUpload = (file, setFieldValue) => {
-    setFieldValue("image", file);
+  const initialItem = data && data.length > 0 ? data[0] : null;
+
+  const fileUpload = async (file, setFieldValue) => {
+    try {
+      const formData = new FormData();
+      formData.append("images", file);
+
+      const res = await axios.post(
+        "http://192.168.1.89:8000/fileuploads/upload",
+        formData
+      );
+      setFieldValue("imageid", res.data.id);
+      setFieldValue("imageUrl", res.data.imageUrl);
+    } catch (err) {
+      console.error(err);
+      toast.error("Image upload failed!");
+    }
   };
+
+  if (loading) return <p>Loading About School Section...</p>;
+  if (error) return <p>Error loading About School section</p>;
 
   return (
     <div className="bg-white md:my-12 md:flex md:flex-row flex-col flex w-full mx-auto md:gap-4">
+      {/* LEFT PANEL */}
       <div className="md:w-1/4 w-full mt-4 flex flex-col justify-center items-center md:items-start md:justify-start mx-auto">
-        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28] underline-offset-2">
+        <h3 className="text-2xl font-semibold mb-1 text-[#0B0C28]">
           About School
         </h3>
         <p className="text-xs text-gray-400">
@@ -41,24 +59,53 @@ const AboutSchool = () => {
         </p>
       </div>
 
+      {/* FORM */}
       <div className="md:w-10/15 w-full">
         <Formik
           enableReinitialize
           initialValues={{
-            image: storedData?.image || null,
-            title: storedData?.title || "",
-            description: storedData?.description || "",
-            stats: storedData?.stats || [{ value: "", label: "" }],
+            imageid: initialItem?.imageid?.id || "",
+            imageUrl: initialItem?.imageid?.imageUrl || "",
+            title: initialItem?.title || "",
+            description: initialItem?.description || "",
+           value: "",
+            label: "" ,
           }}
           validationSchema={schema}
-          onSubmit={(values) => {
-            setStoredData(values);
-            alert(hasData ? "Updated successfully!" : "Saved successfully!");
-            console.log("About School Data:", values);
+          // onSubmit={(values, { resetForm }) => {
+          //   if (initialItem) {
+          //     patch("aboutschoolsection", initialItem.id, values, () => {
+          //       toast.success("About School updated successfully");
+          //       refetch();
+          //       resetForm();
+          //     });
+          //   } else {
+          //     post("aboutschoolsection", values, () => {
+          //       toast.success("About School created successfully");
+          //       refetch();
+          //       resetForm();
+          //     });
+          //   }
+          // }}
+          onSubmit={(values, { resetForm }) => {
+            if (initialItem) {
+              patch("aboutschoolsection", initialItem.id, values, () => {
+                toast.success("About School updated successfully");
+                refetch();
+                resetForm();
+              });
+            } else {
+              post("aboutschoolsection", values, () => {
+                toast.success("About School created successfully");
+                refetch();
+                resetForm();
+              });
+            }
           }}
         >
           {({ values, setFieldValue }) => (
             <Form className="flex flex-col gap-6 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
+              {/* IMAGE */}
               <div className="flex flex-col gap-2">
                 <label className="text-md font-medium">Image *</label>
 
@@ -66,11 +113,11 @@ const AboutSchool = () => {
                   htmlFor="aboutschool-img"
                   className="cursor-pointer border-2 border-dashed border-blue-900 w-full h-42 flex items-center justify-center rounded-md overflow-hidden"
                 >
-                  {values.image ? (
+                  {values.imageUrl ? (
                     <img
-                      src={URL.createObjectURL(values.image)}
+                      src={values.imageUrl}
                       alt="preview"
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   ) : (
                     <FcEditImage className="text-gray-300 text-5xl" />
@@ -84,8 +131,7 @@ const AboutSchool = () => {
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files[0];
-                    if (!file) return;
-                    fileUpload(file, setFieldValue);
+                    if (file) fileUpload(file, setFieldValue);
                   }}
                 />
 
@@ -96,6 +142,7 @@ const AboutSchool = () => {
                 />
               </div>
 
+              {/* TITLE */}
               <div>
                 <label className="text-md font-medium">Title *</label>
                 <Field
@@ -109,18 +156,15 @@ const AboutSchool = () => {
                 />
               </div>
 
+              {/* DESCRIPTION */}
               <div>
-                <label className="text-md font-medium">
-                  Description 
-                </label>
-
+                <label className="text-md font-medium">Description *</label>
                 <JoditEditor
                   ref={editor}
                   value={values.description}
                   onBlur={(content) => setFieldValue("description", content)}
                   onChange={() => {}}
                 />
-
                 <ErrorMessage
                   name="description"
                   component="div"
@@ -128,6 +172,7 @@ const AboutSchool = () => {
                 />
               </div>
 
+              {/* ACHIEVEMENTS */}
               <div>
                 <label className="text-md font-medium mb-2 block">
                   Achievements *
@@ -136,7 +181,7 @@ const AboutSchool = () => {
                 <FieldArray name="stats">
                   {({ remove, push }) => (
                     <>
-                      {values.stats.map((stat, index) => (
+                      {values.map((_, index) => (
                         <div
                           key={index}
                           className="flex gap-3 mb-2 items-center"
@@ -178,35 +223,29 @@ const AboutSchool = () => {
                 </FieldArray>
               </div>
 
+              {/* SUBMIT */}
+              {/* <button
+                type="submit"
+                disabled={posting || patching}
+                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-6 rounded-xl font-semibold"
+              >
+                {posting || patching
+                  ? "Saving..."
+                  : initialItem
+                  ? "Update Section"
+                  : "Create Section"}
+              </button> */}
               <button
                 type="submit"
-                className="bg-linear-to-r from-[#0B0C28] to-cyan-400 text-white py-2.5 px-6 rounded-xl font-semibold cursor-pointer"
+                disabled={patching || posting}
+                className="bg-[#0B0C28] text-white px-6 py-2 rounded-xl"
               >
-                {hasData ? "Update Section" : "Create Section"}
+                {patching || posting
+                  ? "Saving..."
+                  : initialItem
+                  ? "Update"
+                  : "Submit"}
               </button>
-              {storedData && (
-                <div className="mt-2  p-2 w-full">
-                  <h4 className="text-xl font-semibold mb-4 text-[#797aa9]">
-                    Achievements Preview
-                  </h4>
-
-                  <div className="grid grid-cols-3 gap-3 ">
-                    {storedData.stats.map((stat, index) => (
-                      <div
-                        key={index}
-                        className="bg-white border rounded-xl p-5 text-center shadow hover:shadow-lg transition"
-                      >
-                        <p className="text-3xl font-bold text-[#0B0C28]">
-                          {stat.value}
-                        </p>
-                        <p className="text-lg text-gray-600 mt-1">
-                          {stat.label}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </Form>
           )}
         </Formik>

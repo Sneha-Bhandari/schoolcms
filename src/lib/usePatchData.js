@@ -13,7 +13,7 @@ const usePatchData = () => {
 
         try {
             axios
-                .patch(`http://192.168.1.67:8000/${url}/${id}/`, payload)
+                .patch(`http://192.168.1.89:8000/${url}/${id}/`, payload)
                 .then((res) => {
                     setResponse(res.data);
                     setTimeout(() => {
