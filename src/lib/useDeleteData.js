@@ -15,7 +15,7 @@ const useDeleteData = () => {
 
     try {
       axios
-        .delete(`http://192.168.1.89:8000/${url}`)
+        .delete(`http://192.168.1.67:8000/${url}`)
         .then((res) => {
           setResponse(res.data);
           toast.error('data has been deleted')

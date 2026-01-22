@@ -10,12 +10,20 @@ import useGetData from "../../../lib/useGetData";
 import usePostData from "../../../lib/usePostData";
 import usePatchData from "../../../lib/usePatchData";
 
-const schema = Yup.object().shape({
+const schema = Yup.object({
   imageid: Yup.string().required("Image is required"),
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
-  value: Yup.string().required("Required"),
-  label: Yup.string().required("Required"),
+  stats: Yup.array()
+    .of(
+      Yup.object({
+        label: Yup.string().required("Label is required"),
+        value: Yup.number()
+          .typeError("Must be a number")
+          .required("Value is required"),
+      })
+    )
+    .min(1, "At least one achievement is required"),
 });
 
 const AboutSchool = () => {
@@ -33,7 +41,7 @@ const AboutSchool = () => {
       formData.append("images", file);
 
       const res = await axios.post(
-        "http://192.168.1.89:8000/fileuploads/upload",
+        "http://192.168.1.67:8000/fileuploads/upload",
         formData
       );
       setFieldValue("imageid", res.data.id);
@@ -68,40 +76,38 @@ const AboutSchool = () => {
             imageUrl: initialItem?.imageid?.imageUrl || "",
             title: initialItem?.title || "",
             description: initialItem?.description || "",
-           value: "",
-            label: "" ,
+            stats: initialItem
+              ? initialItem.label.map((label, index) => ({
+                label,
+                value: initialItem.value[index],
+              }))
+              : [{ label: "", value: "" }],
           }}
           validationSchema={schema}
-          // onSubmit={(values, { resetForm }) => {
-          //   if (initialItem) {
-          //     patch("aboutschoolsection", initialItem.id, values, () => {
-          //       toast.success("About School updated successfully");
-          //       refetch();
-          //       resetForm();
-          //     });
-          //   } else {
-          //     post("aboutschoolsection", values, () => {
-          //       toast.success("About School created successfully");
-          //       refetch();
-          //       resetForm();
-          //     });
-          //   }
-          // }}
           onSubmit={(values, { resetForm }) => {
+            const payload = {
+              imageid: values.imageid,
+              title: values.title,
+              description: values.description,
+              label: values.stats.map((s) => s.label),
+              value: values.stats.map((s) => Number(s.value)),
+            };
+
             if (initialItem) {
-              patch("aboutschoolsection", initialItem.id, values, () => {
+              patch("aboutschoolsection", initialItem.id, payload, () => {
                 toast.success("About School updated successfully");
                 refetch();
                 resetForm();
               });
             } else {
-              post("aboutschoolsection", values, () => {
+              post("aboutschoolsection", payload, () => {
                 toast.success("About School created successfully");
                 refetch();
                 resetForm();
               });
             }
           }}
+
         >
           {({ values, setFieldValue }) => (
             <Form className="flex flex-col gap-6 shadow-2xl shadow-blue-100 md:p-12 p-8 rounded-xl">
@@ -163,7 +169,7 @@ const AboutSchool = () => {
                   ref={editor}
                   value={values.description}
                   onBlur={(content) => setFieldValue("description", content)}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <ErrorMessage
                   name="description"
@@ -174,53 +180,54 @@ const AboutSchool = () => {
 
               {/* ACHIEVEMENTS */}
               <div>
-                <label className="text-md font-medium mb-2 block">
-                  Achievements *
-                </label>
+                <div>
+                  <label className="text-md font-medium mb-2 block">
+                    Achievements *
+                  </label>
 
-                <FieldArray name="stats">
-                  {({ remove, push }) => (
-                    <>
-                      {values.map((_, index) => (
-                        <div
-                          key={index}
-                          className="flex gap-3 mb-2 items-center"
-                        >
-                          <Field
-                            name={`stats[${index}].value`}
-                            placeholder="Value"
-                            className="border-2 border-blue-900 px-3 py-2 rounded-md w-1/3"
-                          />
-                          <Field
-                            name={`stats[${index}].label`}
-                            placeholder="Label"
-                            className="border-2 border-blue-900 px-3 py-2 rounded-md w-2/3"
-                          />
+                  <FieldArray name="stats">
+                    {({ remove, push }) => (
+                      <>
+                        {values.stats.map((_, index) => (
+                          <div key={index} className="flex gap-3 mb-2 items-center">
+                            <Field
+                              name={`stats.${index}.value`}
+                              placeholder="Value"
+                              type="number"
+                              className="border-2 border-blue-900 px-3 py-2 rounded-md w-1/3"
+                            />
+                            <Field
+                              name={`stats.${index}.label`}
+                              placeholder="Label"
+                              className="border-2 border-blue-900 px-3 py-2 rounded-md w-2/3"
+                            />
 
-                          {values.stats.length > 1 && (
-                            <button
-                              type="button"
-                              className="px-2 py-1 bg-red-600 text-white rounded-md"
-                              onClick={() => remove(index)}
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                            {values.stats.length > 1 && (
+                              <button
+                                type="button"
+                                className="px-2 py-1 bg-red-600 text-white rounded-md"
+                                onClick={() => remove(index)}
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ))}
 
-                      {values.stats.length < 4 && (
-                        <button
-                          type="button"
-                          className="text-sm px-3 py-2 border rounded-md hover:bg-blue-500 hover:text-white"
-                          onClick={() => push({ value: "", label: "" })}
-                        >
-                          + Add Achievement
-                        </button>
-                      )}
-                    </>
-                  )}
-                </FieldArray>
+                        {values.stats.length < 4 && (
+                          <button
+                            type="button"
+                            className="text-sm px-3 py-2 border rounded-md hover:bg-blue-500 hover:text-white"
+                            onClick={() => push({ label: "", value: "" })}
+                          >
+                            + Add Achievement
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </FieldArray>
+                </div>
+
               </div>
 
               {/* SUBMIT */}
@@ -243,8 +250,8 @@ const AboutSchool = () => {
                 {patching || posting
                   ? "Saving..."
                   : initialItem
-                  ? "Update"
-                  : "Submit"}
+                    ? "Update"
+                    : "Submit"}
               </button>
             </Form>
           )}
